@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hrx_store/presentation/page_wishlist/widgets.dart';
+import 'package:hrx_store/presentation/page_payment/widget.dart';
 
 import '../../core/constant.dart';
 
-class ScreenWishlist extends StatelessWidget {
-  const ScreenWishlist({super.key});
+class ScreenPayment extends StatelessWidget {
+  const ScreenPayment({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,32 +37,36 @@ class ScreenWishlist extends StatelessWidget {
                     const SizedBox(
                       width: 10,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: size.width * .15),
-                      child: const Text('Wishlist ♥',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          )),
-                    ),
+                    const Text('Payment',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        )),
                   ],
                 ),
-                SizedBox(
-                  height: size.height * 0.89,
-                  width: size.width,
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return const WishlistProductCard();
-                      },
-                      separatorBuilder: (context, index) => kHeight10,
-                      itemCount: 10),
-                ),
+                kHeight30,
+                const PaymentCard(colr: Colors.black, value: 'card'),
+                kHeight20,
+                const PaymentCard(colr: Colors.red, value: 'Razo'),
+                kHeight20,
+                const PaymentCard(colr: Colors.blue, value: 'Cash On Delivery'),
+                kHeight20,
+                const AddCard(colr: Colors.white, value: 'Add card'),
               ],
             ),
           ),
         ),
       )),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: Colors.black,
+          onPressed: () {},
+          label: const FloatingText(
+            textColor: Colors.white,
+            text: 'Proceed',
+            boldness: FontWeight.bold,
+            textSize: 18,
+          )),
     );
   }
 }

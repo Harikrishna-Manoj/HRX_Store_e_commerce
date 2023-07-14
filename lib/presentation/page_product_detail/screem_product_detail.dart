@@ -1,7 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:hrx_store/core/constant.dart';
+import 'package:hrx_store/presentation/page_delivery/screen_delivery.dart';
 import 'package:hrx_store/presentation/page_product_detail/widgets.dart';
+import 'package:page_transition/page_transition.dart';
 
 // ignore: must_be_immutable
 class ScreenProductDetails extends StatelessWidget {
@@ -143,7 +145,7 @@ class ScreenProductDetails extends StatelessWidget {
                                 text: 'Rs. 199',
                                 textSize: 20,
                                 boldness: FontWeight.bold),
-                            kHeight20,
+                            kHeight10,
                             const ProductDetailsText(
                                 textColor: Colors.black,
                                 text: 'Size',
@@ -155,6 +157,7 @@ class ScreenProductDetails extends StatelessWidget {
                                 text: 'Description',
                                 textSize: 18,
                                 boldness: FontWeight.bold),
+                            kHeight10,
                             const Text(
                                 'jhsdgkjfdhgkdkgjbdskjghds/klbga;iufgdakjgdkjgbkfdjagfkfdjghgjskjgbkjghkjshg')
                           ],
@@ -168,24 +171,33 @@ class ScreenProductDetails extends StatelessWidget {
           ],
         ),
       )),
-      floatingActionButton: const Row(
+      floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          SizedBox(
+          const SizedBox(
             width: 20,
           ),
-          SmallActionButtons(
+          const SmallActionButtons(
               colr: Colors.white,
               string: 'Add to cart',
               icon: Icons.trolley,
               iconcolr: Colors.black,
               stringColor: Colors.black),
-          SmallActionButtons(
-            colr: Colors.black,
-            string: 'Buy now',
-            stringColor: Colors.white,
-            iconcolr: Colors.white,
-            icon: Icons.delivery_dining_outlined,
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      child: const ScreenDelivery(),
+                      type: PageTransitionType.rightToLeft));
+            },
+            child: const SmallActionButtons(
+              colr: Colors.black,
+              string: 'Buy now',
+              stringColor: Colors.white,
+              iconcolr: Colors.white,
+              icon: Icons.delivery_dining_outlined,
+            ),
           )
         ],
       ),

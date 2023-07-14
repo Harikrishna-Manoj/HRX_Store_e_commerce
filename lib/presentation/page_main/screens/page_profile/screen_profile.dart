@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hrx_store/presentation/page_address/screen_address.dart';
-import 'package:hrx_store/presentation/page_main/screens/page_cart/screen_cart.dart';
+import 'package:hrx_store/presentation/page_categories/screen_categories.dart';
 import 'package:hrx_store/presentation/page_main/screens/page_profile/widgets.dart';
 import 'package:hrx_store/presentation/page_order_history/screen_order_history.dart';
 import 'package:hrx_store/presentation/page_wishlist/screen_wishlist.dart';
@@ -61,9 +61,9 @@ class ScreenProfile extends StatelessWidget {
                             page: ScreenWishlist()),
                         kHeight30,
                         const PRofileItems(
-                            itemName: 'My Cart',
-                            iteamIcon: Icons.trolley,
-                            page: ScreenCart()),
+                            itemName: 'Categories',
+                            iteamIcon: Icons.list,
+                            page: ScreenCategories()),
                         kHeight30,
                         const PRofileItems(
                           itemName: 'Shipping Address',

@@ -12,5 +12,5 @@ SizedBox kHeight30 = const SizedBox(height: 30);
 SizedBox kHeight100 = const SizedBox(height: 100);
 double largeFont = 35;
 Color searchFieldColor = Colors.grey[200]!;
-Color searchSuffixColor = Colors.black;
-Color searchPrefixColor = Colors.black;
+Color searchSuffixColor = Colors.white;
+Color searchPrefixColor = Colors.white;

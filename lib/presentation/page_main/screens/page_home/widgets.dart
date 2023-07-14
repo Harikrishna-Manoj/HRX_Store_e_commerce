@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hrx_store/presentation/page_add_card/screen_add-card.dart';
+import 'package:hrx_store/presentation/page_categories/screen_categories.dart';
 import 'package:hrx_store/presentation/page_product_detail/screem_product_detail.dart';
+import 'package:hrx_store/presentation/page_wishlist/screen_wishlist.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../../core/constant.dart';
+import '../../../page_search/screen_search.dart';
 
 class SearchField extends StatelessWidget {
   const SearchField({
@@ -14,22 +18,29 @@ class SearchField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 10.0, left: 10),
+      padding: const EdgeInsets.only(right: 8.0, left: 8, top: 5, bottom: 5),
       child: CupertinoSearchTextField(
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        prefixInsets: const EdgeInsets.symmetric(horizontal: 5),
+        onTap: () {
+          Navigator.push(
+              context,
+              PageTransition(
+                  child: const ScreenSearch(), type: PageTransitionType.fade));
+        },
+        keyboardType: TextInputType.none,
+        prefixInsets: const EdgeInsets.only(right: 5, left: 5),
+        suffixInsets: const EdgeInsets.only(right: 5, left: 5, top: 2),
         onChanged: (value) {},
         placeholder: 'Search',
-        backgroundColor: searchFieldColor,
+        backgroundColor: Colors.black87,
         prefixIcon: Icon(
           CupertinoIcons.search,
-          color: searchPrefixColor,
+          color: searchSuffixColor,
         ),
         suffixIcon: Icon(
           CupertinoIcons.xmark,
           color: searchPrefixColor,
         ),
-        style: const TextStyle(color: Colors.black),
+        style: const TextStyle(color: Colors.white),
       ),
     );
   }
@@ -232,17 +243,44 @@ class TransparentDrawer extends StatelessWidget {
           const SizedBox(
             height: 90,
           ),
-          const DrawerItems(
-            iteamIcon: Icons.favorite,
-            itemName: "My Wishlist",
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      child: const ScreenWishlist(),
+                      type: PageTransitionType.fade));
+            },
+            child: const DrawerItems(
+              iteamIcon: Icons.favorite,
+              itemName: "My Wishlist",
+            ),
           ),
-          const DrawerItems(
-            iteamIcon: Icons.trolley,
-            itemName: "My Cart",
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      child: const ScreenAddCard(),
+                      type: PageTransitionType.fade));
+            },
+            child: const DrawerItems(
+              iteamIcon: Icons.credit_card,
+              itemName: "My Card",
+            ),
           ),
-          const DrawerItems(
-            iteamIcon: Icons.list,
-            itemName: "Category",
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      child: const ScreenCategories(),
+                      type: PageTransitionType.fade));
+            },
+            child: const DrawerItems(
+              iteamIcon: Icons.list,
+              itemName: "Category",
+            ),
           ),
           kHeight30,
           const Divider(),
@@ -320,10 +358,10 @@ class Indicators extends StatelessWidget {
             scrollindexNotifer.value = index;
           },
           count: imageUrl.length,
-          effect: const WormEffect(
+          effect: const ScaleEffect(
             activeDotColor: Colors.black,
-            type: WormType.thin,
-            dotColor: Colors.grey,
+            activePaintStyle: PaintingStyle.stroke,
+            dotColor: Colors.black,
             dotHeight: 8,
             dotWidth: 8,
           ),
