@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hrx_store/presentation/page_add_card/screen_add-card.dart';
 import 'package:hrx_store/presentation/page_categories/screen_categories.dart';
 import 'package:hrx_store/presentation/page_product_detail/screem_product_detail.dart';
+import 'package:hrx_store/presentation/page_view_all_product/screen_view_all_product.dart';
 import 'package:hrx_store/presentation/page_wishlist/screen_wishlist.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -98,7 +100,13 @@ class ViewAllProduct extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               )),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      child: const ScreenViewAllProduct(),
+                      type: PageTransitionType.fade));
+            },
             child: const Text('View All',
                 style: TextStyle(
                   color: Colors.black,
@@ -144,15 +152,34 @@ class GridProducts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
-    return GridView.count(
-        physics: const BouncingScrollPhysics(),
-        shrinkWrap: true,
-        crossAxisCount: 2,
-        mainAxisSpacing: 20,
-        childAspectRatio: 1 / 1.45,
-        children: List.generate(
-            10,
-            (index) => Padding(
+    final Stream<QuerySnapshot> userStream =
+        FirebaseFirestore.instance.collection('product').snapshots();
+    return StreamBuilder<QuerySnapshot>(
+        stream: userStream,
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('Something went worng'),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.black,
+              ),
+            );
+          }
+          return GridView.count(
+              physics: const BouncingScrollPhysics(),
+              shrinkWrap: true,
+              clipBehavior: Clip.none,
+              crossAxisCount: 2,
+              mainAxisSpacing: 20,
+              childAspectRatio: 1 / 1.45,
+              children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                return Padding(
                   padding: const EdgeInsets.only(right: 10, left: 10),
                   child: Stack(
                     children: [
@@ -181,8 +208,8 @@ class GridProducts extends StatelessWidget {
                                     ),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
-                                      child: Image.asset(
-                                        'asset/images/LOGO 2.png',
+                                      child: Image.network(
+                                        data['imageurl'],
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -194,26 +221,29 @@ class GridProducts extends StatelessWidget {
                                           icon: const Icon(
                                               Icons.favorite_outline)))
                                 ]),
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 8.0, top: 5),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 8.0, top: 5),
                                   child: Text(
-                                    'Product name',
-                                    style: TextStyle(
+                                    data['name'],
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 15),
                                   ),
                                 ),
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 8.0, top: 5),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 8.0, top: 5),
                                   child: Text(
-                                    'Category',
+                                    data['category'],
                                   ),
                                 ),
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 8.0, top: 5),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 8.0, top: 5),
                                   child: Text(
-                                    'Rate',
-                                    style: TextStyle(
+                                    'Rate : ${data['price']}',
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 15),
                                   ),
@@ -225,7 +255,9 @@ class GridProducts extends StatelessWidget {
                       ),
                     ],
                   ),
-                )));
+                );
+              }).toList());
+        });
   }
 }
 

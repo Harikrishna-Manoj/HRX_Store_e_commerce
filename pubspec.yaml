@@ -29,6 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   carousel_slider: ^4.2.1
+  cloud_firestore: ^4.8.3
   cupertino_icons: ^1.0.2
   custom_radio_grouped_button: ^2.2.0
   firebase_auth: ^4.6.3

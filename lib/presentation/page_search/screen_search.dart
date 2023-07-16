@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hrx_store/presentation/page_main/screens/page_home/widgets.dart';
+import 'package:hrx_store/presentation/page_search/widgets.dart';
 
 class ScreenSearch extends StatelessWidget {
   const ScreenSearch({super.key});
