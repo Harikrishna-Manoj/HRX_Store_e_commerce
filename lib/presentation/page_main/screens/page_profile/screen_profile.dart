@@ -61,11 +61,6 @@ class ScreenProfile extends StatelessWidget {
                             page: ScreenWishlist()),
                         kHeight30,
                         const PRofileItems(
-                            itemName: 'Categories',
-                            iteamIcon: Icons.list,
-                            page: ScreenCategories()),
-                        kHeight30,
-                        const PRofileItems(
                           itemName: 'Shipping Address',
                           iteamIcon: Icons.location_on_rounded,
                           page: ScreenAddress(),

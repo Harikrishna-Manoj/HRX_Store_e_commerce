@@ -118,9 +118,9 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                               child: CircleAvatar(
                                   radius: 40,
                                   backgroundColor: Colors.green[200],
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.mail,
-                                    color: Colors.white,
+                                    color: Colors.green[400],
                                     size: 40,
                                   )),
                             ),

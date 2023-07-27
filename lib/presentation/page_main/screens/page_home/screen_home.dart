@@ -1,17 +1,15 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:hrx_store/core/constant.dart';
 import 'package:hrx_store/presentation/page_main/screens/page_home/widgets.dart';
 
+// ignore: must_be_immutable
 class ScreenHome extends StatelessWidget {
   ScreenHome({super.key});
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final scrollIndexNotifier = ValueNotifier(0);
-  final posterimageUrl = [
-    'asset/images/poster3.jpeg',
-    'asset/images/poster2.jpg',
-    'asset/images/poster1.jpg'
-  ];
+
+  List<String> posterimageUrl = [];
+  late String posterId;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
@@ -54,26 +52,9 @@ class ScreenHome extends StatelessWidget {
                   SliverList(
                       delegate: SliverChildListDelegate([
                     kHeight10,
-                    ValueListenableBuilder(
-                        valueListenable: scrollIndexNotifier,
-                        builder: (context, value, child) {
-                          return CarouselSlider.builder(
-                              itemCount: posterimageUrl.length,
-                              itemBuilder: (context, index, realIndex) {
-                                return ScrollableImages(
-                                  imageUrl:
-                                      posterimageUrl[scrollIndexNotifier.value],
-                                );
-                              },
-                              options: CarouselOptions(
-                                aspectRatio: 16 / 9,
-                                viewportFraction: 1,
-                                autoPlay: true,
-                                onPageChanged: (index, reason) {
-                                  scrollIndexNotifier.value = index;
-                                },
-                              ));
-                        }),
+                    CurrentPosters(
+                        posterimageUrl: posterimageUrl,
+                        scrollIndexNotifier: scrollIndexNotifier),
                     kHeight10,
                     ValueListenableBuilder(
                         valueListenable: scrollIndexNotifier,

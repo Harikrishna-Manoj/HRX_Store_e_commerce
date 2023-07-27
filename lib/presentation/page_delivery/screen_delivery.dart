@@ -50,8 +50,11 @@ class ScreenDelivery extends StatelessWidget {
                 const SubTitles(
                     heading: 'Shipping address',
                     editIcon: Icons.edit_note_outlined),
-                const AddressDetails(),
+                kHeight20,
+                const AddressCard(),
+                kHeight20,
                 const SubTitles(heading: 'Product Item'),
+                kHeight20,
                 const ProductCard(),
               ],
             ),

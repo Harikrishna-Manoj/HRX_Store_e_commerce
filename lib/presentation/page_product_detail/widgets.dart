@@ -139,7 +139,7 @@ class ScrollableImages extends StatelessWidget {
     Size size = MediaQuery.sizeOf(context);
     return SizedBox(
       width: size.width,
-      child: Image.asset(
+      child: Image.network(
         urlImage,
         fit: BoxFit.cover,
       ),

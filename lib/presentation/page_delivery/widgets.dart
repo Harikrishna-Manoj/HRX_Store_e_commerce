@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hrx_store/presentation/page_address/screen_address.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:text_scroll/text_scroll.dart';
 
 import '../../core/constant.dart';
 
@@ -54,53 +57,49 @@ class ProductCard extends StatelessWidget {
   }
 }
 
-class AddressDetails extends StatelessWidget {
-  const AddressDetails({
+class AddressCard extends StatelessWidget {
+  const AddressCard({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
-    return SizedBox(
-      height: size.height * .3,
-      width: size.width,
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text(
-            "Street: ",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            "City:",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            "State:",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            "Phone number:",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            "Country:",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
       ),
+      elevation: 3,
+      child: Container(
+          width: size.width,
+          height: size.height * 0.18,
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(15)),
+          child: Row(
+            children: [
+              const SizedBox(
+                width: 15,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  kHeight15,
+                  const TextScroll(
+                    'Harikrishna Manoj',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  ),
+                  kHeight15,
+                  const Text('''Panachikal(H),Angamaly,
+Kerala - 683576'''),
+                  kHeight15,
+                  const Text('9539440572')
+                ],
+              ),
+              const SizedBox(
+                width: 50,
+              ),
+            ],
+          )),
     );
   }
 }
@@ -118,7 +117,19 @@ class SubTitles extends StatelessWidget {
           heading,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        InkWell(onTap: () {}, child: Icon(editIcon))
+        // InkWell(onTap: () {}, child: Icon(editIcon))
+        IconButton(
+            tooltip: 'Change Address',
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      child: const ScreenAddress(),
+                      type: PageTransitionType.fade));
+            },
+            icon: Icon(
+              editIcon,
+            ))
       ],
     );
   }

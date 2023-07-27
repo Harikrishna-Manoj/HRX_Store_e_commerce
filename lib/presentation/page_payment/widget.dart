@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
-import '../page_add_card/screen_add-card.dart';
+import '../page_add_deabitcard/screen_add_card.dart';
 
 class PaymentCard extends StatelessWidget {
   const PaymentCard({

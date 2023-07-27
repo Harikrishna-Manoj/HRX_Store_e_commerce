@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hrx_store/presentation/page_main/screen_navigationbar.dart';
 import 'package:hrx_store/presentation/page_payment/widget.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../core/constant.dart';
 
@@ -60,7 +62,54 @@ class ScreenPayment extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
           backgroundColor: Colors.black,
-          onPressed: () {},
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text(
+                  'Order Placed',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                content: SizedBox(
+                  height: size.height * .3,
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.blue[100],
+                        child: CircleAvatar(
+                            radius: 40,
+                            backgroundColor: Colors.blue[200],
+                            child: Icon(
+                              Icons.celebration_rounded,
+                              color: Colors.blue[400],
+                              size: 60,
+                            )),
+                      ),
+                      kHeight30,
+                      kHeight30,
+                      FloatingActionButton.extended(
+                        backgroundColor: Colors.black,
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              PageTransition(
+                                  child: ScreenNavigationbar(),
+                                  type: PageTransitionType.fade));
+                        },
+                        label: const Text('Continue shopping',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.white)),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
           label: const FloatingText(
             textColor: Colors.white,
             text: 'Proceed',

@@ -1,5 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hrx_store/core/Model/product.dart';
+import 'package:hrx_store/presentation/page_categories/screen_listed_category_product.dart';
 import 'package:hrx_store/presentation/page_categories/widgets.dart';
+import 'package:hrx_store/services/search_service/search_service.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../core/constant.dart';
 
@@ -9,6 +14,9 @@ class ScreenCategories extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
+    List<Product> shoes = [];
+    List<Product> clothes = [];
+    List<Product> bags = [];
     return Scaffold(
       body: SafeArea(
           child: SizedBox(
@@ -48,14 +56,82 @@ class ScreenCategories extends StatelessWidget {
               ),
               kHeight30,
               kHeight30,
-              const CategoryCard(
-                  imageUrl: 'asset/images/category1.webp', heading: 'Shoes'),
-              kHeight30,
-              const CategoryCard(
-                  imageUrl: 'asset/images/category2.webp', heading: 'Clothes'),
-              kHeight30,
-              const CategoryCard(
-                  imageUrl: 'asset/images/category3.jpeg', heading: 'Bags'),
+              StreamBuilder(
+                  stream: SeacrchService.getProducts(),
+                  builder: (context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasError) {
+                      return const Center(
+                        child: Text('Something went wrong'),
+                      );
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.black,
+                        ),
+                      );
+                    }
+                    List<DocumentSnapshot> document = snapshot.data;
+                    List<Product> productList =
+                        SeacrchService.convertToProductsList(document);
+                    for (var product in productList) {
+                      if (product.category == 'Shoes') {
+                        shoes.add(product);
+                      } else if (product.category == 'Cloths') {
+                        clothes.add(product);
+                      } else if (product.category == 'Bags') {
+                        bags.add(product);
+                      }
+                    }
+                    // print(shoes);
+                    // print(clothes);
+                    return Column(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                PageTransition(
+                                    child: ScreenListedCategory(
+                                        products: shoes, title: 'Shoes'),
+                                    type: PageTransitionType.rightToLeft));
+                          },
+                          child: const CategoryCard(
+                              imageUrl: 'asset/images/category1.webp',
+                              heading: 'Shoes'),
+                        ),
+                        kHeight30,
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                PageTransition(
+                                    child: ScreenListedCategory(
+                                        products: clothes, title: 'Cloths'),
+                                    type: PageTransitionType.rightToLeft));
+                          },
+                          child: const CategoryCard(
+                              imageUrl: 'asset/images/category2.webp',
+                              heading: 'Cloths'),
+                        ),
+                        kHeight30,
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                PageTransition(
+                                    child: ScreenListedCategory(
+                                        products: bags, title: 'Bags'),
+                                    type: PageTransitionType.rightToLeft));
+                          },
+                          child: const CategoryCard(
+                              imageUrl: 'asset/images/category3.jpeg',
+                              heading: 'Bags'),
+                        ),
+                      ],
+                    );
+                  }),
             ],
           ),
         ),

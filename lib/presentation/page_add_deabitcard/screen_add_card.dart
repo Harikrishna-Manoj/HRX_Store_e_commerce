@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hrx_store/presentation/page_view_all_product/widget.dart';
+import 'package:hrx_store/presentation/page_add_deabitcard/widget.dart';
 
-class ScreenViewAllProduct extends StatelessWidget {
-  const ScreenViewAllProduct({super.key});
+import '../../core/constant.dart';
+
+class ScreenAddCard extends StatelessWidget {
+  const ScreenAddCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,26 +14,27 @@ class ScreenViewAllProduct extends StatelessWidget {
         automaticallyImplyLeading: false,
         centerTitle: true,
         title: const Text(
-          'All products',
+          'Add debit card',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
             onPressed: () => Navigator.pop(context),
             icon: const Icon(
-              Icons.arrow_circle_left_rounded,
+              Icons.arrow_circle_left,
               size: 35,
             )),
       ),
       body: SafeArea(
-          child: SizedBox(
-        height: size.height,
-        width: size.width,
-        child: const SingleChildScrollView(
-          child: Column(
-            children: [AllGridProducts()],
+        child: SizedBox(
+          width: size.width,
+          height: size.height,
+          child: const Column(
+            children: [
+              CardLayout(),
+            ],
           ),
         ),
-      )),
+      ),
     );
   }
 }
