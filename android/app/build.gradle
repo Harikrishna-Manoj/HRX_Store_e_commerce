@@ -62,6 +62,10 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+    
+    configurations{
+        all*.exclude group:'com.google.guava', module: 'listenablefuture'
+    }
 }
 
 flutter {

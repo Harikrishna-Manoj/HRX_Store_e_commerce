@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:hrx_store/presentation/page_main/screen_navigationbar.dart';
 import 'package:hrx_store/presentation/page_payment/widget.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:hrx_store/services/payment_service/payment_service.dart';
 
 import '../../core/constant.dart';
 
+// ignore: must_be_immutable
 class ScreenPayment extends StatelessWidget {
-  const ScreenPayment({super.key});
-
+  ScreenPayment(
+      {super.key,
+      this.productId,
+      required this.toalValue,
+      required this.addressId,
+      this.productIdList,
+      required this.fromCart});
+  String? productId;
+  final String toalValue;
+  final String addressId;
+  List<dynamic>? productIdList;
+  final bool fromCart;
   @override
   Widget build(BuildContext context) {
+    List<dynamic> productIds = [];
+    if (fromCart == true) {
+      for (var i = 0; i < productIdList!.length; i++) {
+        productIds.add(productIdList![i]);
+      }
+    }
+    fromCart ? productIds : productIds.add(productId!);
     Size size = MediaQuery.sizeOf(context);
     return Scaffold(
       body: SafeArea(
@@ -47,75 +64,152 @@ class ScreenPayment extends StatelessWidget {
                   ],
                 ),
                 kHeight30,
-                const PaymentCard(colr: Colors.black, value: 'card'),
+                InkWell(
+                  onTap: () => showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Column(
+                        children: [
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                IconButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    icon: const Icon(Icons.cancel_outlined))
+                              ]),
+                          const Text(
+                            'Continue with Rozorpay',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      content: SizedBox(
+                        height: size.height * .3,
+                        child: Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.green[100],
+                              child: CircleAvatar(
+                                  radius: 40,
+                                  backgroundColor: Colors.green[200],
+                                  child: Icon(
+                                    Icons.money,
+                                    color: Colors.green[400],
+                                    size: 60,
+                                  )),
+                            ),
+                            kHeight30,
+                            kHeight30,
+                            FloatingActionButton.extended(
+                              backgroundColor: Colors.black,
+                              onPressed: () {
+                                PaymentService.placeOrderRozorPay(
+                                    int.parse(toalValue),
+                                    addressId,
+                                    productIds,
+                                    'placed',
+                                    'Rozorpay',
+                                    context);
+                              },
+                              label: const Text('Place order',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: Colors.white)),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  child: const PaymentCard(
+                      value: 'Razor Pay',
+                      imageUrl: 'asset/images/razorpay.png'),
+                ),
                 kHeight20,
-                const PaymentCard(colr: Colors.red, value: 'Razo'),
+                InkWell(
+                  onTap: () {
+                    CODConfirmation(context, size, productIds);
+                  },
+                  child: const PaymentCard(
+                      value: 'Cash On Delivery',
+                      imageUrl: 'asset/images/cash_on_delivery.png'),
+                ),
                 kHeight20,
-                const PaymentCard(colr: Colors.blue, value: 'Cash On Delivery'),
-                kHeight20,
-                const AddCard(colr: Colors.white, value: 'Add card'),
+                // const PaymentCard(
+                //   value: 'card',
+                //   imageUrl: 'asset/images/card.png',
+                // ),
+                // kHeight20,
+                // const AddCard(colr: Colors.white, value: 'Add card'),
               ],
             ),
           ),
         ),
       )),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton.extended(
-          backgroundColor: Colors.black,
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text(
-                  'Order Placed',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                content: SizedBox(
-                  height: size.height * .3,
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.blue[100],
-                        child: CircleAvatar(
-                            radius: 40,
-                            backgroundColor: Colors.blue[200],
-                            child: Icon(
-                              Icons.celebration_rounded,
-                              color: Colors.blue[400],
-                              size: 60,
-                            )),
-                      ),
-                      kHeight30,
-                      kHeight30,
-                      FloatingActionButton.extended(
-                        backgroundColor: Colors.black,
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                              context,
-                              PageTransition(
-                                  child: ScreenNavigationbar(),
-                                  type: PageTransitionType.fade));
-                        },
-                        label: const Text('Continue shopping',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Colors.white)),
-                      )
-                    ],
-                  ),
-                ),
+    );
+  }
+
+  // ignore: non_constant_identifier_names
+  Future<dynamic> CODConfirmation(
+      BuildContext context, Size size, List<dynamic> productIds) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Column(
+          children: [
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.cancel_outlined))
+            ]),
+            const Text(
+              'Continue with COD',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: SizedBox(
+          height: size.height * .3,
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.green[100],
+                child: CircleAvatar(
+                    radius: 40,
+                    backgroundColor: Colors.green[200],
+                    child: Icon(
+                      Icons.money,
+                      color: Colors.green[400],
+                      size: 60,
+                    )),
               ),
-            );
-          },
-          label: const FloatingText(
-            textColor: Colors.white,
-            text: 'Proceed',
-            boldness: FontWeight.bold,
-            textSize: 18,
-          )),
+              kHeight30,
+              kHeight30,
+              FloatingActionButton.extended(
+                backgroundColor: Colors.black,
+                onPressed: () {
+                  PaymentService.placeOrderCashOnDelivery(int.parse(toalValue),
+                      addressId, productIds, 'placed', 'cod', context);
+                },
+                label: const Text('Place order',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.white)),
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

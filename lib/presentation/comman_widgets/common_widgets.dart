@@ -131,7 +131,7 @@ showSnackbar(String? text, BuildContext context) {
     content: Text(text),
     backgroundColor: Colors.black,
   );
-
   ScaffoldMessenger.of(context).removeCurrentSnackBar();
+
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }

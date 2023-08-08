@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:hrx_store/presentation/page_delivery/widgets.dart';
-import 'package:hrx_store/presentation/page_payment/screen_payment.dart';
-import 'package:page_transition/page_transition.dart';
 
 import '../../core/constant.dart';
 
+// ignore: must_be_immutable
 class ScreenDelivery extends StatelessWidget {
-  const ScreenDelivery({super.key});
+  ScreenDelivery({super.key, required this.fromCart, this.id});
+  final bool fromCart;
+  String? id;
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: const Text(
+          'Delivery address',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(
+              Icons.arrow_circle_left,
+              size: 35,
+            )),
+      ),
       body: SafeArea(
           child: SizedBox(
         height: size.height,
@@ -22,40 +37,27 @@ class ScreenDelivery extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(
-                          context,
-                        );
-                      },
-                      icon: Icon(
-                        Icons.arrow_circle_left_rounded,
-                        size: largeFont,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    const Text('Delivery address',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        )),
-                  ],
-                ),
-                kHeight30,
                 const SubTitles(
                     heading: 'Shipping address',
                     editIcon: Icons.edit_note_outlined),
                 kHeight20,
                 const AddressCard(),
-                kHeight20,
+                kHeight10,
                 const SubTitles(heading: 'Product Item'),
-                kHeight20,
-                const ProductCard(),
+                kHeight10,
+                fromCart == true
+                    ? const FromCartPageProductCard()
+                    : FromProductPageProductCard(id: id!),
+                const SubTitles(heading: 'Total amount'),
+                fromCart == true
+                    ? const FromCartPageTotalAmount()
+                    : FromProductPageTotalAmount(
+                        id: id!,
+                      ),
+                SizedBox(
+                  width: size.width,
+                  height: size.height * .2,
+                )
               ],
             ),
           ),
@@ -69,40 +71,27 @@ class ScreenDelivery extends StatelessWidget {
               elevation: 0,
               highlightElevation: 0,
               onPressed: () {},
-              label: const Row(
+              label: Row(
                 children: [
-                  ProductPriceText(
+                  const ProductPriceText(
                     textColor: Colors.grey,
                     text: 'Total Price : ',
                     boldness: FontWeight.bold,
                     textSize: 14,
                   ),
-                  ProductPriceText(
-                    textColor: Colors.black,
-                    text: '${199}',
-                    boldness: FontWeight.bold,
-                    textSize: 20,
-                  )
+                  fromCart
+                      ? const FromCartTotalAmountFloating()
+                      : FromProductTotalAmountFloating(id: id)
                 ],
               )),
           const SizedBox(
             width: 5,
           ),
-          FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    PageTransition(
-                        child: const ScreenPayment(),
-                        type: PageTransitionType.rightToLeft));
-              },
-              backgroundColor: Colors.black,
-              label: const ProductPriceText(
-                textColor: Colors.white,
-                text: 'Place Order',
-                boldness: FontWeight.bold,
-                textSize: 20,
-              ))
+          fromCart
+              ? const FromCartProceedButton()
+              : FromProductPageProceedButton(
+                  id: id!,
+                )
         ],
       ),
     );

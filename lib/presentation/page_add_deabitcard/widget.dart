@@ -38,6 +38,29 @@ class HeaderWidgets extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.sizeOf(context);
+    ValueNotifier<String> numberNotifier = ValueNotifier<String>('');
+    ValueNotifier<String> dateNotifier = ValueNotifier<String>('');
+    ValueNotifier<String> cvNotifier = ValueNotifier<String>('');
+    TextEditingController cardNumberController = TextEditingController();
+    TextEditingController cardDateController = TextEditingController();
+    TextEditingController cardCVController = TextEditingController();
+    List<String> allMonths = [
+      'month',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+    String dropdownMonthValue = allMonths.first;
     return FittedBox(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -55,55 +78,110 @@ class HeaderWidgets extends StatelessWidget {
                 color: Colors.white, borderRadius: BorderRadius.circular(15)),
             child: IconButton(
               onPressed: () {
-                //          return await showDialog(
-                // context: context,
-                // builder: (context) {
-                //   bool isChecked = false;
-                //   return StatefulBuilder(builder: (context, setState) {
-                //     return AlertDialog(
-                //       content: Form(
-                //           key: _formKey,
-                //           child: Column(
-                //             mainAxisSize: MainAxisSize.min,
-                //             children: [
-                //               TextFormField(
-                //                 controller: _textEditingController,
-                //                 validator: (value) {
-                //                   return value.isNotEmpty ? null : "Enter any text";
-                //                 },
-                //                 decoration:
-                //                     InputDecoration(hintText: "Please Enter Text"),
-                //               ),
-                //               Row(
-                //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //                 children: [
-                //                   Text("Choice Box"),
-                //                   Checkbox(
-                //                       value: isChecked,
-                //                       onChanged: (checked) {
-                //                         setState(() {
-                //                           isChecked = checked;
-                //                         });
-                //                       })
-                //                 ],
-                //               )
-                //             ],
-                //           )),
-                //       title: Text('Stateful Dialog'),
-                //       actions: <Widget>[
-                //         InkWell(
-                //           child: Text('OK   '),
-                //           onTap: () {
-                //             if (_formKey.currentState.validate()) {
-                //               // Do something like updating SharedPreferences or User Settings etc.
-                //               Navigator.of(context).pop();
-                //             }
-                //           },
-                //         ),
-                //       ],
-                //     );
-                //   });
-                // });
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return StatefulBuilder(builder: (context, setState) {
+                        return AlertDialog(
+                          title: const Text('Add card'),
+                          content: SizedBox(
+                            height: size.height * 0.2,
+                            child: Column(
+                              children: [
+                                TextField(
+                                  onChanged: (value) {
+                                    numberNotifier.value = value;
+                                  },
+                                  controller: cardNumberController,
+                                  decoration: const InputDecoration(
+                                      hintText: "Card number"),
+                                ),
+                                kHeight30,
+                                Row(
+                                  children: [
+                                    StatefulBuilder(
+                                      builder: (context, setState) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          child: DropdownButton<String>(
+                                            // underline: Divider(),
+                                            value: dropdownMonthValue,
+                                            icon: const Icon(Icons
+                                                .keyboard_arrow_down_outlined),
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            elevation: 8,
+                                            style: const TextStyle(
+                                                color: Colors.black),
+                                            disabledHint: Container(
+                                              height: 2,
+                                              color: Colors.black,
+                                            ),
+                                            onChanged: (String? value) {
+                                              // This is called when the user selects an item.
+                                              setState(() {
+                                                dropdownMonthValue = value!;
+                                              });
+                                            },
+                                            items: allMonths
+                                                .map<DropdownMenuItem<String>>(
+                                                    (String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(
+                                                  value,
+                                                ),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      width: 25,
+                                    ),
+                                    SizedBox(
+                                      width: 40,
+                                      child: TextField(
+                                        onChanged: (value) {
+                                          dateNotifier.value = value;
+                                        },
+                                        controller: cardDateController,
+                                        decoration: const InputDecoration(
+                                            hintText: "date"),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 25,
+                                    ),
+                                    SizedBox(
+                                      width: 40,
+                                      child: TextField(
+                                        onChanged: (value) {
+                                          cvNotifier.value = value;
+                                        },
+                                        controller: cardCVController,
+                                        decoration: const InputDecoration(
+                                            hintText: "CV"),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                          actions: <Widget>[
+                            MaterialButton(
+                              color: Colors.black,
+                              textColor: Colors.white,
+                              child: const Text('Save'),
+                              onPressed: () {},
+                            ),
+                          ],
+                        );
+                      });
+                    });
               },
               icon: const Icon(
                 Icons.add_outlined,

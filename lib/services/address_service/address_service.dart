@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hrx_store/core/Model/address.dart';
 import 'package:hrx_store/main.dart';
-import 'package:hrx_store/presentation/comman_widgets/common_widgets.dart';
 
 import '../../presentation/page_address/screen_address.dart';
 
@@ -25,7 +25,7 @@ class AddressService {
     // print('adress added${address.id.toString()}');
     await addressRef.doc(address.id).set(address.toJson());
     // print(address.id);
-    addressRef.doc(address.id).update({'isDefault': true});
+    addressRef.doc(address.id).update({'isDefault': false});
     navigatorKey.currentState!.pop();
     // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
@@ -38,7 +38,7 @@ class AddressService {
           reverseTransitionDuration: Duration.zero,
         ));
     // ignore: use_build_context_synchronously
-    showSnackbar('Address added', context);
+    Fluttertoast.showToast(msg: 'Address added');
   }
 
   static Future<List<Address>> displayAddress() async {
@@ -90,7 +90,7 @@ class AddressService {
           reverseTransitionDuration: Duration.zero,
         ));
     // ignore: use_build_context_synchronously
-    showSnackbar('Address added', context);
+    Fluttertoast.showToast(msg: 'Address updated');
   }
 
   static deleteAddress(String id, BuildContext context) async {
@@ -108,6 +108,6 @@ class AddressService {
           reverseTransitionDuration: Duration.zero,
         ));
     // ignore: use_build_context_synchronously
-    showSnackbar('Address removed', context);
+    Fluttertoast.showToast(msg: 'Address removed');
   }
 }

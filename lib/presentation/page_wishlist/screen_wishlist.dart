@@ -36,35 +36,31 @@ class ScreenWishlist extends StatelessWidget {
           child: SizedBox(
         height: size.height,
         width: size.width,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: size.height * 0.89,
-                  width: size.width,
-                  child: StreamBuilder(
-                    stream: WishlistService.wishlistgetProducts(userId!),
-                    builder: (context, AsyncSnapshot snapshot) {
-                      if (snapshot.hasError) {
-                        return const Center(
-                          child: Text('Something went wrong'),
-                        );
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.black,
-                          ),
-                        );
-                      }
-                      List<DocumentSnapshot> documents = snapshot.data!;
-                      List<WishlistProduct> wishlistProducts =
-                          WishlistService.convertToProductsList(documents);
-                      return ValueListenableBuilder(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: size.height * 0.89,
+                width: size.width,
+                child: StreamBuilder(
+                  stream: WishlistService.wishlistgetProducts(userId!),
+                  builder: (context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasError) {
+                      return const Center(
+                        child: Text('Something went wrong'),
+                      );
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return WishListShimmer(size: size);
+                    }
+                    List<DocumentSnapshot> documents = snapshot.data!;
+                    List<WishlistProduct> wishlistProducts =
+                        WishlistService.convertToProductsList(documents);
+                    return Padding(
+                      padding:
+                          const EdgeInsets.only(left: 10, top: 10, right: 10),
+                      child: ValueListenableBuilder(
                           valueListenable: pageRefreashNotifier,
                           builder: (context, value, child) {
                             return ListView.separated(
@@ -87,12 +83,12 @@ class ScreenWishlist extends StatelessWidget {
                                 },
                                 separatorBuilder: (context, index) => kHeight10,
                                 itemCount: wishlistProducts.length);
-                          });
-                    },
-                  ),
+                          }),
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       )),

@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:custom_radio_grouped_button/custom_radio_grouped_button.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../core/constant.dart';
@@ -251,6 +252,177 @@ class ProductDetailsText extends StatelessWidget {
           text,
           style: TextStyle(
               fontSize: textSize, fontWeight: boldness, color: textColor),
+        ),
+      ],
+    );
+  }
+}
+
+class DeatilShimmer extends StatelessWidget {
+  const DeatilShimmer({
+    super.key,
+    required this.size,
+  });
+
+  final Size size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: size.height * 0.44),
+        Container(
+          height: size.height * .65,
+          width: size.width,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(50),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: [
+                kHeight30,
+                kHeight10,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Shimmer(
+                      color: Colors.black,
+                      child: const Padding(
+                          padding: EdgeInsets.only(left: 8.0, top: 5),
+                          child: SizedBox(
+                            height: 20,
+                            width: 80,
+                          )),
+                    ),
+                    Shimmer(
+                      color: Colors.black,
+                      child: const Padding(
+                          padding: EdgeInsets.only(left: 8.0, top: 5),
+                          child: SizedBox(
+                            height: 35,
+                            width: 60,
+                          )),
+                    ),
+                  ],
+                ),
+
+                Row(
+                  children: [
+                    Shimmer(
+                      color: Colors.black,
+                      child: const Padding(
+                          padding: EdgeInsets.only(left: 8.0, top: 5),
+                          child: SizedBox(
+                            height: 10,
+                            width: 50,
+                          )),
+                    ),
+                  ],
+                ),
+                kHeight20,
+                Row(
+                  children: [
+                    Shimmer(
+                      color: Colors.black,
+                      child: const Padding(
+                          padding: EdgeInsets.only(left: 8.0, top: 5),
+                          child: SizedBox(
+                            height: 15,
+                            width: 80,
+                          )),
+                    ),
+                  ],
+                ),
+                kHeight10,
+
+                //color choice chip
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Shimmer(
+                      color: Colors.black,
+                      child: const Padding(
+                          padding: EdgeInsets.only(left: 8.0, top: 5),
+                          child: SizedBox(
+                            height: 30,
+                            width: 80,
+                          )),
+                    ),
+                    Shimmer(
+                      color: Colors.black,
+                      child: const Padding(
+                          padding: EdgeInsets.only(left: 8.0, top: 5),
+                          child: SizedBox(
+                            height: 30,
+                            width: 80,
+                          )),
+                    ),
+                    Shimmer(
+                      color: Colors.black,
+                      child: const Padding(
+                          padding: EdgeInsets.only(left: 8.0, top: 5),
+                          child: SizedBox(
+                            height: 30,
+                            width: 80,
+                          )),
+                    ),
+                  ],
+                ),
+                kHeight10,
+                Row(
+                  children: [
+                    Shimmer(
+                      color: Colors.black,
+                      child: const Padding(
+                          padding: EdgeInsets.only(left: 8.0, top: 5),
+                          child: SizedBox(
+                            height: 15,
+                            width: 80,
+                          )),
+                    ),
+                  ],
+                ),
+                kHeight10,
+
+                Shimmer(
+                  color: Colors.black,
+                  child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0, top: 5),
+                      child: SizedBox(
+                        height: 30,
+                        width: size.width,
+                      )),
+                ),
+                kHeight10,
+                Row(
+                  children: [
+                    Shimmer(
+                      color: Colors.black,
+                      child: const Padding(
+                          padding: EdgeInsets.only(left: 8.0, top: 5),
+                          child: SizedBox(
+                            height: 20,
+                            width: 80,
+                          )),
+                    ),
+                  ],
+                ),
+                kHeight10,
+                Shimmer(
+                  color: Colors.black,
+                  child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0, top: 5),
+                      child: SizedBox(
+                        height: 30,
+                        width: size.width,
+                      )),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );

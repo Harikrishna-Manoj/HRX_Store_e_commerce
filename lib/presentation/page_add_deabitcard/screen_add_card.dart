@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hrx_store/presentation/page_add_deabitcard/widget.dart';
 
-import '../../core/constant.dart';
-
 class ScreenAddCard extends StatelessWidget {
   const ScreenAddCard({super.key});
 

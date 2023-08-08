@@ -48,140 +48,178 @@ class ScreenSearch extends StatelessWidget {
                 builder: (context, value, child) {
                   return StreamBuilder(
                     stream: SeacrchService.getProducts(),
+                    // stream: FirebaseFirestore.instance
+                    //     .collection('product')
+                    //     .doc()
+                    //     .snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
                         return showSnackbar('Something went wrong', context);
                       }
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.black,
-                          ),
-                        );
+                        return SizedBox(
+                            width: size.width,
+                            height: size.height,
+                            child: SearchShimmer(size: size));
                       }
                       if (snapshot.hasData) {
                         List<DocumentSnapshot> documents = snapshot.data!;
                         List<Product> productList =
                             SeacrchService.convertToProductsList(documents);
-                        List<Product> searchList = productList
-                            .where((element) => element.name
-                                .toString()
-                                .toLowerCase()
-                                .contains(value
-                                    .toLowerCase()
-                                    .replaceAll(RegExp(r"\s+"), "")))
-                            .toList();
+                        List<Product> searchList = productList.where((element) {
+                          if (element.name.toString().toLowerCase().contains(
+                                  value
+                                      .toLowerCase()
+                                      .replaceAll(RegExp(r"\s+"), "")) ||
+                              element.category
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains(value
+                                      .toLowerCase()
+                                      .replaceAll(RegExp(r"\s+"), ""))) {
+                            return true;
+                          }
+                          return false;
+                        }).toList();
 
-                        return Column(
-                          children: List.generate(
-                            searchList.length,
-                            (index) => Padding(
-                              padding:
-                                  const EdgeInsets.only(right: 10, left: 10),
-                              child: Stack(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      // print(searchList[index].id);
-                                      Navigator.push(
-                                          context,
-                                          PageTransition(
-                                              child: ScreenProductDetails(
-                                                  id: searchList[index].id!),
-                                              type: PageTransitionType.fade));
-                                    },
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                      elevation: 5,
-                                      child: Container(
-                                        width: size.width,
-                                        height: size.height * 0.13,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(15)),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              margin: const EdgeInsets.only(
-                                                  left: 4, right: 15),
-                                              height: size.height * 0.12,
-                                              width: size.width * .23,
+                        return searchList.isNotEmpty
+                            ? Column(
+                                children: List.generate(
+                                  searchList.length,
+                                  (index) => Padding(
+                                    padding: const EdgeInsets.only(
+                                        right: 10, left: 10),
+                                    child: Stack(
+                                      children: [
+                                        InkWell(
+                                          onTap: () {
+                                            // print(searchList[index].id);
+                                            Navigator.push(
+                                                context,
+                                                PageTransition(
+                                                    child: ScreenProductDetails(
+                                                        id: searchList[index]
+                                                            .id!),
+                                                    type: PageTransitionType
+                                                        .fade));
+                                          },
+                                          child: Card(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                            ),
+                                            elevation: 5,
+                                            child: Container(
+                                              width: size.width,
+                                              height: size.height * 0.13,
                                               decoration: BoxDecoration(
+                                                  color: Colors.white,
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          13)),
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(13),
-                                                child: Image.network(
-                                                  searchList[index].imageurl!,
-                                                  fit: BoxFit.fill,
-                                                ),
+                                                          15)),
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 4, right: 15),
+                                                    height: size.height * 0.12,
+                                                    width: size.width * .23,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(13)),
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              13),
+                                                      child: Image.network(
+                                                        searchList[index]
+                                                            .imageurl!,
+                                                        fit: BoxFit.fill,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      SizedBox(
+                                                        width:
+                                                            size.width * 0.45,
+                                                        child: TextScroll(
+                                                          searchList[index]
+                                                              .name,
+                                                          mode: TextScrollMode
+                                                              .endless,
+                                                          velocity:
+                                                              const Velocity(
+                                                                  pixelsPerSecond:
+                                                                      Offset(30,
+                                                                          0)),
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 15),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        searchList[index]
+                                                            .category!,
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors
+                                                                .grey[600]),
+                                                      ),
+                                                      Text(
+                                                        "₹ ${searchList[index].price!}",
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors
+                                                                .grey[600]),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  FavouriteButton(
+                                                      id: searchList[index].id!,
+                                                      imageurl:
+                                                          searchList[index]
+                                                              .imageurl!,
+                                                      amount: searchList[index]
+                                                          .price
+                                                          .toString(),
+                                                      name: searchList[index]
+                                                          .name,
+                                                      category:
+                                                          searchList[index]
+                                                              .category!)
+                                                ],
                                               ),
                                             ),
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(
-                                                  width: size.width * 0.45,
-                                                  child: TextScroll(
-                                                    searchList[index].name,
-                                                    mode:
-                                                        TextScrollMode.endless,
-                                                    velocity: const Velocity(
-                                                        pixelsPerSecond:
-                                                            Offset(30, 0)),
-                                                    style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 15),
-                                                  ),
-                                                ),
-                                                Text(
-                                                  searchList[index].category!,
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.grey[600]),
-                                                ),
-                                                Text(
-                                                  "₹ ${searchList[index].price!}",
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.grey[600]),
-                                                ),
-                                              ],
-                                            ),
-                                            FavouriteButton(
-                                                id: searchList[index].id!,
-                                                imageurl:
-                                                    searchList[index].imageurl!,
-                                                amount: searchList[index]
-                                                    .price
-                                                    .toString(),
-                                                name: searchList[index].name,
-                                                category:
-                                                    searchList[index].category!)
-                                          ],
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
+                                ),
+                              )
+                            : SizedBox(
+                                height: size.height,
+                                width: size.width,
+                                child: const Center(
+                                  child: Text('No produts'),
+                                ),
+                              );
                       }
                       return const Text('');
                     },

@@ -7,7 +7,7 @@ class Address {
   String cityOrStreet = '';
   String houseNoorName = '';
   String? id;
-  bool isDefault = false;
+  bool? isDefault;
   Address(
       {required this.name,
       required this.phoneNumber,
@@ -16,6 +16,7 @@ class Address {
       required this.state,
       required this.cityOrStreet,
       required this.houseNoorName,
+      this.isDefault,
       this.id});
   static Address fromJson(Map<String, dynamic> json) => Address(
       name: json['name'],
@@ -25,6 +26,7 @@ class Address {
       state: json['state'],
       cityOrStreet: json['cityOrStreet'],
       houseNoorName: json['houseNoorName'],
+      isDefault: json['isDefault'],
       id: json['id']);
   Map<String, dynamic> toJson() => {
         'name': name,

@@ -31,15 +31,15 @@ class Product {
       price: json['price'],
       category: json['category']);
 
-  Map<String, dynamic> toJason() => {
-        'name': name,
-        'discription': descrption,
-        'id': id,
-        'color': color,
-        'size': size,
-        'imageurl': imageurl,
-        'category': category
-      };
+  // Map<String, dynamic> toJason() => {
+  //       'name': name,
+  //       'discription': descrption,
+  //       'id': id,
+  //       'color': color,
+  //       'size': size,
+  //       'imageurl': imageurl,
+  //       'category': category
+  //     };
 }
 
 class WishlistProduct {
@@ -64,10 +64,10 @@ class WishlistProduct {
       price: json['price'],
       category: json['category']);
 
-  Map<String, dynamic> toJason() => {
-        'name': name,
-        'id': id,
-        'imageurl': imageurl,
-        'category': category,
-      };
+  // Map<String, dynamic> toJason() => {
+  //       'name': name,
+  //       'id': id,
+  //       'imageurl': imageurl,
+  //       'category': category,
+  //     };
 }

@@ -30,13 +30,12 @@ class _ScreenAddressState extends State<ScreenAddress> {
 
   getRadioIndex() {
     addressRef.get().then((QuerySnapshot querySnapshot) {
-      final doccument = querySnapshot.docs;
-      for (var i = 0; i < doccument.length; i++) {
-        final boolValue = doccument[i]['isDefault'];
-        if (boolValue) {
+      final document = querySnapshot.docs;
+      for (var i = 0; i < document.length; i++) {
+        final boolValue = document[i]['isDefault'];
+        if (boolValue == true) {
           selectedAddressNotifier.value = i;
-        } else {
-          break;
+          // print(boolValue.toString());
         }
       }
     });

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../core/Model/product.dart';
-import '../../presentation/comman_widgets/common_widgets.dart';
 
 class WishlistService {
   static Future addToWishlist(
@@ -30,10 +30,10 @@ class WishlistService {
         'imageurl': image,
       });
       // ignore: use_build_context_synchronously
-      showSnackbar('Added to wishlist', context);
+      Fluttertoast.showToast(msg: 'Added to wishlist');
     } catch (e) {
       // print(e.toString());
-      showSnackbar(e.toString(), context);
+      Fluttertoast.showToast(msg: e.toString());
     }
   }
 
@@ -49,10 +49,10 @@ class WishlistService {
           .doc(productId);
       await cartCollection.delete();
       // ignore: use_build_context_synchronously
-      showSnackbar('Removed from wishlist', context);
+      Fluttertoast.showToast(msg: 'Removed from wishlist');
     } catch (e) {
       // print(e.toString());
-      showSnackbar(e.toString(), context);
+      Fluttertoast.showToast(msg: e.toString());
     }
   }
 

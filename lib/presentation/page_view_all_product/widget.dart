@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:text_scroll/text_scroll.dart';
 
 import '../../core/Model/product.dart';
+import '../../core/constant.dart';
 import '../../services/search_service/search_service.dart';
 import '../../services/wishlist_service/wishlist_service.dart';
 import '../page_product_detail/screem_product_detail.dart';
@@ -26,11 +28,8 @@ class AllGridProducts extends StatelessWidget {
               child: Text('Something went worng'),
             );
           } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Colors.black,
-              ),
+            return Center(
+              child: GridShimmer(size: size, length: 4),
             );
           }
 
@@ -218,5 +217,88 @@ class _FavouriteButtonState extends State<FavouriteButton> {
                       )),
           );
         });
+  }
+}
+
+class GridShimmer extends StatelessWidget {
+  const GridShimmer({
+    super.key,
+    required this.size,
+    required this.length,
+  });
+
+  final Size size;
+  final int length;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.count(
+        physics: const BouncingScrollPhysics(),
+        shrinkWrap: true,
+        clipBehavior: Clip.none,
+        crossAxisCount: 2,
+        mainAxisSpacing: 20,
+        childAspectRatio: 1 / 1.45,
+        children: List.generate(
+            length,
+            (index) => Padding(
+                  padding: const EdgeInsets.only(right: 10, left: 10),
+                  child: Stack(
+                    children: [
+                      Card(
+                        elevation: 3,
+                        child: SizedBox(
+                          width: size.width * 0.6,
+                          height: size.height * 0.6,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Stack(children: [
+                                Shimmer(
+                                  color: Colors.black,
+                                  child: Container(
+                                    width: size.width * 0.45,
+                                    height: size.width * 0.45,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                              kHeight10,
+                              Shimmer(
+                                color: Colors.black,
+                                child: const Padding(
+                                    padding: EdgeInsets.only(left: 8.0, top: 5),
+                                    child: SizedBox(
+                                      height: 5,
+                                      width: 80,
+                                    )),
+                              ),
+                              kHeight10,
+                              Shimmer(
+                                color: Colors.black,
+                                child: const SizedBox(
+                                  height: 10,
+                                  width: 60,
+                                ),
+                              ),
+                              kHeight10,
+                              Shimmer(
+                                color: Colors.black,
+                                child: const Padding(
+                                    padding: EdgeInsets.only(left: 8.0, top: 5),
+                                    child: SizedBox(
+                                      height: 5,
+                                      width: 80,
+                                    )),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )));
   }
 }

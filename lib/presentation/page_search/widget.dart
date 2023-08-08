@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 import '../../services/wishlist_service/wishlist_service.dart';
 
@@ -81,5 +82,85 @@ class _FavouriteButtonState extends State<FavouriteButton> {
                       )),
           );
         });
+  }
+}
+
+class SearchShimmer extends StatelessWidget {
+  const SearchShimmer({
+    super.key,
+    required this.size,
+  });
+
+  final Size size;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: 7,
+      itemBuilder: (context, index) => Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        elevation: 5,
+        child: Shimmer(
+          color: Colors.black,
+          child: Container(
+              width: size.width,
+              height: size.height * 0.13,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(15)),
+              child: Row(
+                children: [
+                  Shimmer(
+                    color: Colors.black,
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 4, right: 15),
+                      height: size.height * 0.12,
+                      width: size.width * .23,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(13)),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Shimmer(
+                        color: Colors.black,
+                        child: const Padding(
+                            padding: EdgeInsets.only(left: 8.0, top: 5),
+                            child: SizedBox(
+                              height: 5,
+                              width: 80,
+                            )),
+                      ),
+                      Shimmer(
+                        color: Colors.black,
+                        child: const Padding(
+                            padding: EdgeInsets.only(left: 8.0, top: 5),
+                            child: SizedBox(
+                              height: 5,
+                              width: 80,
+                            )),
+                      ),
+                      Shimmer(
+                        color: Colors.black,
+                        child: const Padding(
+                            padding: EdgeInsets.only(left: 8.0, top: 5),
+                            child: SizedBox(
+                              height: 5,
+                              width: 80,
+                            )),
+                      ),
+                    ],
+                  ),
+                ],
+              )),
+        ),
+      ),
+    );
   }
 }

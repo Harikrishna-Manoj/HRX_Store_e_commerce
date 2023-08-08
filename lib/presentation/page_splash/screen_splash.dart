@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hrx_store/presentation/page_splash/pagedirection/page_direction.dart';
@@ -44,9 +45,19 @@ class ScreenSplash extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 25),
                   ),
-                  const Text(
-                    "Shoes • Bags • Cloths",
-                  )
+                  DefaultTextStyle(
+                    style: TextStyle(
+                        fontFamily: GoogleFonts.poppins().fontFamily,
+                        color: Colors.black),
+                    child: AnimatedTextKit(
+                      animatedTexts: [
+                        TypewriterAnimatedText('Shoes • Cloths • Bags',
+                            speed: const Duration(milliseconds: 100),
+                            curve: Curves.decelerate,
+                            cursor: ''),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             )

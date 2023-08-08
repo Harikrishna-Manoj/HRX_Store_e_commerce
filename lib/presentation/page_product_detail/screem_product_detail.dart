@@ -9,6 +9,7 @@ import 'package:hrx_store/presentation/page_product_detail/widgets.dart';
 import 'package:hrx_store/services/cart_service/cart_service.dart';
 import 'package:hrx_store/services/wishlist_service/wishlist_service.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 // ignore: must_be_immutable
 class ScreenProductDetails extends StatefulWidget {
@@ -34,7 +35,6 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
   ];
   int choiceChipColorValue = 0;
   int choiceChipSizeValue = 0;
-  bool isProductIncart = false;
 
   ValueNotifier scrollIndexNotifer = ValueNotifier(0);
   ValueNotifier sizeIndexNotifer = ValueNotifier(0);
@@ -108,10 +108,11 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                         }
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.black,
+                          return Shimmer(
+                            color: Colors.black,
+                            child: SizedBox(
+                              width: size.width,
+                              height: size.height * .5,
                             ),
                           );
                         }
@@ -162,13 +163,14 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     ValueListenableBuilder(
-                                        valueListenable: scrollIndexNotifer,
-                                        builder: (context, index, _) {
-                                          return Indicators(
-                                              scrollIndexNotifer:
-                                                  scrollIndexNotifer,
-                                              imageUrl: imageUrl);
-                                        }),
+                                      valueListenable: scrollIndexNotifer,
+                                      builder: (context, index, _) {
+                                        return Indicators(
+                                            scrollIndexNotifer:
+                                                scrollIndexNotifer,
+                                            imageUrl: imageUrl);
+                                      },
+                                    ),
                                   ],
                                 ),
                               ],
@@ -210,20 +212,23 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                                                         .value ==
                                                     false) {
                                                   // ignore: unrelated_type_equality_checks
-                                                  if (await CartServices.checkProductExistance(
-                                                          productId: widget.id,
-                                                          colour: colorList[
-                                                              choiceChipColorValue],
-                                                          size: snapshot.data[
-                                                                      'category'] ==
-                                                                  'Shoes'
-                                                              ? sizeintList[
-                                                                  choiceChipSizeValue]
-                                                              : sizeStringList[
-                                                                  choiceChipSizeValue],
-                                                          totalValue: snapshot
-                                                              .data['price'],
-                                                          context: context) ==
+                                                  if (await CartServices
+                                                          .checkProductExistance(
+                                                              productId:
+                                                                  widget.id,
+                                                              colour: colorList[
+                                                                  choiceChipColorValue],
+                                                              size: snapshot.data[
+                                                                          'category'] ==
+                                                                      'Shoes'
+                                                                  ? sizeintList[
+                                                                      choiceChipSizeValue]
+                                                                  : sizeStringList[
+                                                                      choiceChipSizeValue],
+                                                              // totalValue: snapshot
+                                                              //     .data['price'],
+                                                              context:
+                                                                  context) ==
                                                       true) {
                                                     // ignore: use_build_context_synchronously
                                                     await CartServices
@@ -341,12 +346,7 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                         }
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.black,
-                            ),
-                          );
+                          return DeatilShimmer(size: size);
                         }
                         return Column(
                           children: [
@@ -355,7 +355,7 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                               height: size.height * .65,
                               width: size.width,
                               decoration: BoxDecoration(
-                                color: Colors.grey[400],
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: Padding(
@@ -365,28 +365,42 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                                   children: [
                                     kHeight30,
                                     kHeight10,
-                                    ProductDetailsText(
-                                        textColor: Colors.black,
-                                        text: snapshot.data['name'],
-                                        textSize: 20,
-                                        boldness: FontWeight.bold),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        ProductDetailsText(
+                                            textColor: Colors.black,
+                                            text: snapshot.data['name'],
+                                            textSize: 20,
+                                            boldness: FontWeight.bold),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 15),
+                                          child: Column(
+                                            children: [
+                                              const ProductDetailsText(
+                                                  textColor: Colors.black,
+                                                  text: 'Total Price',
+                                                  textSize: 10,
+                                                  boldness: FontWeight.bold),
+                                              ProductDetailsText(
+                                                  textColor: Colors.black,
+                                                  text:
+                                                      "₹ ${snapshot.data['price'].toString()}",
+                                                  textSize: 20,
+                                                  boldness: FontWeight.bold),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                     ProductDetailsText(
                                       textColor: Colors.grey[700]!,
                                       text: snapshot.data['category'],
                                     ),
                                     kHeight10,
-                                    const ProductDetailsText(
-                                        textColor: Colors.white,
-                                        text: 'Total Price',
-                                        textSize: 10,
-                                        boldness: FontWeight.bold),
-                                    ProductDetailsText(
-                                        textColor: Colors.black,
-                                        text:
-                                            "₹ ${snapshot.data['price'].toString()}",
-                                        textSize: 20,
-                                        boldness: FontWeight.bold),
-                                    kHeight10,
+
                                     const ProductDetailsText(
                                         textColor: Colors.black,
                                         text: 'Colour',
@@ -397,6 +411,7 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                                       builder:
                                           (BuildContext context, setState) {
                                         return Wrap(
+                                          // direction: Axis.vertical,
                                           spacing: 5.0,
                                           children: List<Widget>.generate(
                                             colorList.length,
@@ -585,7 +600,7 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                                               ? sizeintList[choiceChipSizeValue]
                                               : sizeStringList[
                                                   choiceChipSizeValue],
-                                          totalValue: snapshot.data['price'],
+                                          // totalValue: snapshot.data['price'],
                                           context: context) ==
                                       true) {
                                     // ignore: use_build_context_synchronously
@@ -610,12 +625,24 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                                   stringColor: Colors.black),
                             ),
                       InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              PageTransition(
-                                  child: const ScreenDelivery(),
-                                  type: PageTransitionType.rightToLeft));
+                        onTap: () async {
+                          if (await CartServices.checkProductExistance(
+                                  productId: widget.id,
+                                  colour: colorList[choiceChipColorValue],
+                                  size: snapshot.data['category'] == 'Shoes'
+                                      ? sizeintList[choiceChipSizeValue]
+                                      : sizeStringList[choiceChipSizeValue],
+                                  // totalValue: snapshot.data['price'],
+                                  context: context) ==
+                              true) {
+                            // ignore: use_build_context_synchronously
+                            Navigator.push(
+                                context,
+                                PageTransition(
+                                    child: ScreenDelivery(
+                                        fromCart: false, id: widget.id),
+                                    type: PageTransitionType.rightToLeft));
+                          }
                         },
                         child: const SmallActionButtons(
                           colr: Colors.black,

@@ -6,11 +6,12 @@ import '../page_add_deabitcard/screen_add_card.dart';
 class PaymentCard extends StatelessWidget {
   const PaymentCard({
     super.key,
-    required this.colr,
     required this.value,
+    required this.imageUrl,
   });
-  final Color colr;
+
   final String value;
+  final String imageUrl;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
@@ -30,8 +31,12 @@ class PaymentCard extends StatelessWidget {
                 margin: const EdgeInsets.only(left: 4, right: 15),
                 height: size.height * 0.05,
                 width: size.height * 0.05,
-                decoration: BoxDecoration(
-                    color: colr, borderRadius: BorderRadius.circular(20)),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(20)),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset(imageUrl),
+                ),
               ),
               Text(
                 value,
