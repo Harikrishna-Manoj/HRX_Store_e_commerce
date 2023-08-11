@@ -65,67 +65,7 @@ class ScreenPayment extends StatelessWidget {
                 ),
                 kHeight30,
                 InkWell(
-                  onTap: () => showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Column(
-                        children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                IconButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    icon: const Icon(Icons.cancel_outlined))
-                              ]),
-                          const Text(
-                            'Continue with Rozorpay',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      content: SizedBox(
-                        height: size.height * .3,
-                        child: Column(
-                          children: [
-                            CircleAvatar(
-                              radius: 50,
-                              backgroundColor: Colors.green[100],
-                              child: CircleAvatar(
-                                  radius: 40,
-                                  backgroundColor: Colors.green[200],
-                                  child: Icon(
-                                    Icons.money,
-                                    color: Colors.green[400],
-                                    size: 60,
-                                  )),
-                            ),
-                            kHeight30,
-                            kHeight30,
-                            FloatingActionButton.extended(
-                              backgroundColor: Colors.black,
-                              onPressed: () {
-                                PaymentService.placeOrderRozorPay(
-                                    int.parse(toalValue),
-                                    addressId,
-                                    productIds,
-                                    'placed',
-                                    'Rozorpay',
-                                    context);
-                              },
-                              label: const Text('Place order',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                      color: Colors.white)),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  onTap: () => RozorPayConfirmation(context, size, productIds),
                   child: const PaymentCard(
                       value: 'Razor Pay',
                       imageUrl: 'asset/images/razorpay.png'),
@@ -151,6 +91,65 @@ class ScreenPayment extends StatelessWidget {
           ),
         ),
       )),
+    );
+  }
+
+  // ignore: non_constant_identifier_names
+  Future<dynamic> RozorPayConfirmation(
+      BuildContext context, Size size, List<dynamic> productIds) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Column(
+          children: [
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.cancel_outlined))
+            ]),
+            const Text(
+              'Continue with Rozorpay',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: SizedBox(
+          height: size.height * .3,
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.green[100],
+                child: CircleAvatar(
+                    radius: 40,
+                    backgroundColor: Colors.green[200],
+                    child: Icon(
+                      Icons.money,
+                      color: Colors.green[400],
+                      size: 60,
+                    )),
+              ),
+              kHeight30,
+              kHeight30,
+              FloatingActionButton.extended(
+                backgroundColor: Colors.black,
+                onPressed: () {
+                  PaymentService.placeOrderRozorPay(int.parse(toalValue),
+                      addressId, productIds, 'placed', 'Rozorpay', context);
+                },
+                label: const Text('Place order',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.white)),
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 

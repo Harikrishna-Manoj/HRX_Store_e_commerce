@@ -28,24 +28,27 @@ class PaymentService {
         strokeWidth: 2,
       )),
     );
-    final orderRef = FirebaseFirestore.instance.collection('orders').doc();
-    OrderModel orderDeatails = OrderModel(
-        productId: productId,
-        totalValue: totalValue,
-        addressId: addressId,
-        userId: userId,
-        orderDate:
-            '${dateTime.day}/${dateTime.month}/${dateTime.year} - ${dateTime.hour}:${dateTime.minute}:${dateTime.millisecond}',
-        orderId: orderRef.id,
-        orderStatus: orderStatus,
-        paymentMethod: paymentMethod);
-    final cartRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('cart');
-    await orderRef.set(orderDeatails.toJason());
     for (var product in productId!) {
+      final orderRef = FirebaseFirestore.instance.collection('orders').doc();
+      OrderModel orderDeatails = OrderModel(
+          productId: product,
+          totalValue: totalValue,
+          addressId: addressId,
+          userId: userId,
+          orderDate: '${dateTime.day}/${dateTime.month}/${dateTime.year}',
+          orderId: orderRef.id,
+          orderStatus: orderStatus,
+          paymentMethod: paymentMethod);
+      final cartRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('cart');
+      await orderRef.set(orderDeatails.toJason());
       final cartProduct = await cartRef.doc(product).get();
+      Map<String, dynamic> data = cartProduct.data() ?? {'productcount': 1};
+      await orderRef.update({'count': data['productcount']});
+
+      // ignore: prefer_if_null_operators
       if (cartProduct.exists) {
         await FirebaseFirestore.instance
             .collection('users')
@@ -55,6 +58,7 @@ class PaymentService {
             .delete();
       }
     }
+
     // ignore: use_build_context_synchronously
     Navigator.pop(context); // ignore:
     // ignore: use_build_context_synchronously
@@ -63,7 +67,7 @@ class PaymentService {
     Navigator.push(
         context,
         PageTransition(
-            child: ScreenOrderSuccess(orderId: orderRef.id),
+            child: const ScreenOrderSuccess(orderId: 'id'),
             type: PageTransitionType.fade));
   }
 
@@ -82,21 +86,7 @@ class PaymentService {
         strokeWidth: 2,
       )),
     );
-    final orderRef = FirebaseFirestore.instance.collection('orders').doc();
-    OrderModel orderDeatails = OrderModel(
-        productId: productId,
-        totalValue: totalValue,
-        addressId: addressId,
-        userId: userId,
-        orderDate:
-            '${dateTime.day}/${dateTime.month}/${dateTime.year} - ${dateTime.hour}:${dateTime.minute}:${dateTime.millisecond}',
-        orderId: orderRef.id,
-        orderStatus: orderStatus,
-        paymentMethod: paymentMethod);
-    final cartRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('cart');
+
     var options = {
       'key': rozorPayKey,
       'amount': totalValue! * 100,
@@ -108,10 +98,28 @@ class PaymentService {
 
     // ignore: no_leading_underscores_for_local_identifiers
     _handlePaymentSuccess(PaymentSuccessResponse response, BuildContext context,
-        List<dynamic>? productId, cartRef) async {
-      await orderRef.set(orderDeatails.toJason());
+        List<dynamic>? productId) async {
       for (var product in productId!) {
+        final orderRef = FirebaseFirestore.instance.collection('orders').doc();
+        OrderModel orderDeatails = OrderModel(
+            productId: product,
+            totalValue: totalValue,
+            addressId: addressId,
+            userId: userId,
+            orderDate: '${dateTime.day}/${dateTime.month}/${dateTime.year}',
+            orderId: orderRef.id,
+            orderStatus: orderStatus,
+            paymentMethod: paymentMethod);
+        final cartRef = FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .collection('cart');
+        await orderRef.set(orderDeatails.toJason());
         final cartProduct = await cartRef.doc(product).get();
+        Map<String, dynamic> data = cartProduct.data() ?? {'productcount': 1};
+        await orderRef.update({'count': data['productcount']});
+
+        // ignore: prefer_if_null_operators
         if (cartProduct.exists) {
           await FirebaseFirestore.instance
               .collection('users')
@@ -121,6 +129,7 @@ class PaymentService {
               .delete();
         }
       }
+
       Fluttertoast.showToast(msg: 'Payment Success');
       // ignore: use_build_context_synchronously
       Navigator.pop(context); // ignore:
@@ -130,7 +139,7 @@ class PaymentService {
       Navigator.push(
           context,
           PageTransition(
-              child: ScreenOrderSuccess(orderId: orderRef.id),
+              child: const ScreenOrderSuccess(orderId: "id"),
               type: PageTransitionType.fade));
       log('order placed');
     }
@@ -143,7 +152,7 @@ class PaymentService {
     razorpay.open(options);
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
         (PaymentSuccessResponse response) {
-      _handlePaymentSuccess(response, context, productId, cartRef);
+      _handlePaymentSuccess(response, context, productId);
     });
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
         (PaymentFailureResponse response) {

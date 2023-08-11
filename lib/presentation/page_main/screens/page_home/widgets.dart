@@ -753,7 +753,7 @@ class Indicators extends StatelessWidget {
     // if (imageUrl.length > 3) {
     //   imageUrl.removeRange(2, imageUrl.length - 1);
     // }
-    print(imageUrl.length);
+    // print(imageUrl.length);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
