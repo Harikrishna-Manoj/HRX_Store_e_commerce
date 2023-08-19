@@ -8,6 +8,7 @@ import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:text_scroll/text_scroll.dart';
 
 import '../../../../core/constant.dart';
+import '../../../page_delivery/screen_delivery.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({
@@ -241,16 +242,13 @@ class SlideAction extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       kHeight30,
-                      SizedBox(
-                        width: size.width * 0.3,
-                        child: TextScroll(
-                          name,
-                          mode: TextScrollMode.endless,
-                          velocity:
-                              const Velocity(pixelsPerSecond: Offset(30, 0)),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
+                      TextScroll(
+                        name,
+                        mode: TextScrollMode.endless,
+                        velocity:
+                            const Velocity(pixelsPerSecond: Offset(30, 0)),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                       Text('Size: $productSize'),
                       kHeight10,
@@ -480,5 +478,59 @@ class CartShimmer extends StatelessWidget {
             )),
       ),
     );
+  }
+}
+
+class CartProceedButton extends StatelessWidget {
+  const CartProceedButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.sizeOf(context);
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(AddressService.userID)
+            .collection('cart')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text("Something went wrong"),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return Shimmer(
+                color: Colors.black,
+                child: SizedBox(
+                  width: size.width * 0.9,
+                  height: 30,
+                ));
+          }
+          return snapshot.data!.docs.isNotEmpty
+              ? FloatingActionButton.extended(
+                  icon: const Icon(
+                    Icons.arrow_circle_right_rounded,
+                    color: Colors.white,
+                  ),
+                  backgroundColor: Colors.black,
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        PageTransition(
+                            child: ScreenDelivery(fromCart: true),
+                            type: PageTransitionType.rightToLeftWithFade));
+                  },
+                  label: const Text(
+                    'Proceed to Checkout',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.white),
+                  ),
+                )
+              : const SizedBox();
+        });
   }
 }

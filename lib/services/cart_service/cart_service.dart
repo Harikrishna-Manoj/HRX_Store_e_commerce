@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +72,6 @@ class CartServices {
     } else {
       return false;
     }
-    // ignore: use_build_context_synchronously
     Fluttertoast.showToast(msg: 'Selected combination is not available');
 
     return false;
@@ -138,6 +135,22 @@ class CartServices {
       cartPageRebuildNotifer.value = true;
     } else {
       cartPageRebuildNotifer.value = false;
+    }
+  }
+
+  static Future<bool> checkingCartIsEmpty() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final userId = currentUser!.email;
+    final cartSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('cart')
+        .get();
+    // print(cartSnapshot.docs.length);
+    if (cartSnapshot.docs.isNotEmpty) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

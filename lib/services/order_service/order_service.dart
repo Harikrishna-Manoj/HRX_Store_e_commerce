@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../address_service/address_service.dart';
@@ -36,7 +35,7 @@ class OrderService {
     return querySnapshot;
   }
 
-  static deleteOrder(BuildContext context, String orderId) async {
+  static deleteOrder(String orderId) async {
     final orderRef =
         FirebaseFirestore.instance.collection('orders').doc(orderId);
     await orderRef.delete();
@@ -50,5 +49,35 @@ class OrderService {
         .where('orderId', isEqualTo: orderId)
         .get();
     return snapShot.docs.first;
+  }
+
+  static orderStatusUpdate(String orderId, String status) async {
+    final orderRef =
+        FirebaseFirestore.instance.collection('orders').doc(orderId);
+    await orderRef.update({'orderStatus': status});
+  }
+
+  static returnOrder(
+      String reason, String orderId, String userId, String productId) async {
+    final returnRef = FirebaseFirestore.instance.collection('return').doc();
+    await returnRef.set({
+      'returnId': returnRef.id,
+      'orderId': orderId,
+      'userId': userId,
+      'reason': reason,
+      'productId': productId
+    });
+    Fluttertoast.showToast(msg: 'Return request sended');
+  }
+
+  static Future<QuerySnapshot> getProductIdFromReturnList() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final userID = user!.email;
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('return')
+        .where('userId', isEqualTo: userID)
+        .get();
+    return querySnapshot;
   }
 }

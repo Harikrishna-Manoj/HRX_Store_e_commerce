@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hrx_store/presentation/page_address/screen_address.dart';
 import 'package:hrx_store/presentation/page_main/screens/page_profile/widgets.dart';
 import 'package:hrx_store/presentation/page_order_history/screen_order_history.dart';
+import 'package:hrx_store/presentation/page_returned_product/screen_returned_product.dart';
 import 'package:hrx_store/presentation/page_wishlist/screen_wishlist.dart';
 
 import '../../../../core/constant.dart';
@@ -69,6 +70,12 @@ class ScreenProfile extends StatelessWidget {
                           itemName: 'Order History',
                           iteamIcon: Icons.history_outlined,
                           page: ScreenOrderHistory(),
+                        ),
+                        kHeight30,
+                        const PRofileItems(
+                          itemName: 'Returns',
+                          iteamIcon: Icons.production_quantity_limits,
+                          page: ScreenReturnedProduct(),
                         ),
                         kHeight30,
                         const LogOutButton(

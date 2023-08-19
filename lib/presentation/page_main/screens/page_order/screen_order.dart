@@ -113,6 +113,10 @@ class ScreenOrder extends StatelessWidget {
                                                             .toList();
 
                                                     return OrderProductCard(
+                                                        productId: orderList[index]
+                                                            .productId,
+                                                        userId: orderList[index]
+                                                            .userId!,
                                                         price: orderProductList[
                                                                 0]
                                                             .price

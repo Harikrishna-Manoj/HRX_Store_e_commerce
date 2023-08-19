@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hrx_store/presentation/page_order_tracker/screen_order_tracker.dart';
 import 'package:hrx_store/services/order_service/order_service.dart';
 import 'package:page_transition/page_transition.dart';
@@ -17,6 +18,8 @@ class OrderProductCard extends StatelessWidget {
     required this.orderStatus,
     required this.orderDate,
     required this.price,
+    required this.userId,
+    required this.productId,
   });
   final String color;
   final String productName;
@@ -27,8 +30,11 @@ class OrderProductCard extends StatelessWidget {
   final String orderStatus;
   final String orderDate;
   final String price;
+  final String userId;
+  final String productId;
   @override
   Widget build(BuildContext context) {
+    final reasonController = TextEditingController();
     Size size = MediaQuery.sizeOf(context);
     return InkWell(
       onTap: () {
@@ -49,143 +55,215 @@ class OrderProductCard extends StatelessWidget {
           height: size.height * 0.20,
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(15)),
-          child: Row(
+          child: Stack(
             children: [
-              Container(
-                margin: const EdgeInsets.only(left: 4, right: 15),
-                height: size.height * 0.12,
-                width: size.width * .23,
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(13)),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(13),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  SizedBox(
-                    width: size.width * 0.3,
-                    child: TextScroll(
-                      productName,
-                      mode: TextScrollMode.endless,
-                      velocity: const Velocity(pixelsPerSecond: Offset(30, 0)),
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16),
+                  Container(
+                    margin: const EdgeInsets.only(left: 4, right: 15),
+                    height: size.height * 0.12,
+                    width: size.width * .23,
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(13)),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(13),
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                  Text(
-                    'Quantity: $count',
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                  Text(
-                    'Size : $productSize',
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                  Text(
-                    'Colour: $color',
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                  Text(
-                    'Date: $orderDate',
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                  SizedBox(
-                    width: size.width * 0.3,
-                    child: TextScroll(
-                      'Status: $orderStatus',
-                      mode: TextScrollMode.endless,
-                      velocity: const Velocity(pixelsPerSecond: Offset(30, 0)),
-                      style: const TextStyle(color: Colors.green),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: size.width * 0.3,
+                          child: TextScroll(
+                            productName,
+                            mode: TextScrollMode.endless,
+                            velocity:
+                                const Velocity(pixelsPerSecond: Offset(30, 0)),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                        ),
+                        Text(
+                          'Quantity: $count',
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                        Text(
+                          'Size : $productSize',
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                        Text(
+                          'Colour: $color',
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                        Text(
+                          'Date: $orderDate',
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                        SizedBox(
+                          width: size.width * 0.3,
+                          child: TextScroll(
+                            orderStatus,
+                            mode: TextScrollMode.endless,
+                            velocity:
+                                const Velocity(pixelsPerSecond: Offset(30, 0)),
+                            style: const TextStyle(color: Colors.green),
+                          ),
+                        ),
+                        Text(
+                          '₹ $price',
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
-                  ),
-                  Text(
-                    '₹ $price',
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
-              const SizedBox(
-                width: 50,
-              ),
               orderStatus == 'delivered'
-                  ? IconButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text(
-                                'Do you want to return this product ?',
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold)),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text(
-                                    "No",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  )),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Yes',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.red)))
-                            ],
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.replay_rounded))
-                  : InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Do you want to cancel ?',
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold)),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text(
-                                    "Don't cancel",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  )),
-                              TextButton(
-                                  onPressed: () {
-                                    OrderService.deleteOrder(context, orderId);
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Canel order',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.red)))
-                            ],
-                          ),
-                        );
-                      },
-                      child: const Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                      ),
+                  ? Positioned(
+                      right: 30,
+                      top: size.height * 0.14 / 2,
+                      child: IconButton(
+                          tooltip: 'return product',
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text(
+                                    'Do you want to return this product ?',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold)),
+                                content: ReasonField(
+                                    reasonController: reasonController),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text(
+                                        "No",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      )),
+                                  TextButton(
+                                      onPressed: () {
+                                        if (reasonController.text.isNotEmpty) {
+                                          OrderService.returnOrder(
+                                              reasonController.text,
+                                              orderId,
+                                              userId,
+                                              productId);
+                                          Navigator.pop(context);
+                                          OrderService.orderStatusUpdate(
+                                              orderId, 'requested');
+                                        } else {
+                                          Fluttertoast.showToast(
+                                              msg: 'Reason required');
+                                        }
+                                      },
+                                      child: const Text('Yes',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.red)))
+                                ],
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.replay_rounded)),
                     )
+                  : orderStatus == 'returned'
+                      ? Positioned(
+                          right: 20,
+                          top: size.height * 0.17 / 2,
+                          child: const Text(
+                            'Returned',
+                            style: TextStyle(
+                                color: Colors.red, fontWeight: FontWeight.bold),
+                          ),
+                        )
+                      : orderStatus == 'requested'
+                          ? Positioned(
+                              right: 20,
+                              top: size.height * 0.17 / 2,
+                              child: const Text(
+                                'Requested',
+                                style: TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )
+                          : Positioned(
+                              right: 30,
+                              top: size.height * 0.14 / 2,
+                              child: IconButton(
+                                tooltip: 'Cancel order',
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text(
+                                          'Do you want to cancel ?',
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold)),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text(
+                                              "Don't cancel",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                        TextButton(
+                                            onPressed: () {
+                                              OrderService.deleteOrder(orderId);
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Canel order',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.red)))
+                                      ],
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            )
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class ReasonField extends StatelessWidget {
+  const ReasonField({
+    super.key,
+    required this.reasonController,
+  });
+
+  final TextEditingController reasonController;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      controller: reasonController,
+      decoration: const InputDecoration(labelText: 'Reason for return'),
     );
   }
 }

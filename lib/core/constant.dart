@@ -18,4 +18,4 @@ Color searchFieldColor = Colors.grey[200]!;
 Color searchSuffixColor = Colors.white;
 Color searchPrefixColor = Colors.white;
 
-const String rozorPayKey = 'rzp_test_8j5RzOvMvhiSJn';
+const String razorPayKey = 'rzp_test_8j5RzOvMvhiSJn';

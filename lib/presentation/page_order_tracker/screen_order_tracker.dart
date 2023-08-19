@@ -1,4 +1,6 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:hrx_store/core/constant.dart';
 
 import 'package:hrx_store/services/order_service/order_service.dart';
 import 'package:order_tracker/order_tracker.dart';
@@ -78,22 +80,49 @@ class ScreenOrderTracker extends StatelessWidget {
             } else if (status == 'delivered') {
               statusNotifer.value = 3;
             }
-            return ValueListenableBuilder(
-                valueListenable: statusNotifer,
-                builder: (context, value, child) {
-                  return Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: OrderTracker(
-                      status: statusList[value],
-                      activeColor: Colors.green,
-                      inActiveColor: Colors.grey[300],
-                      orderTitleAndDateList: orderList,
-                      shippedTitleAndDateList: shippedList,
-                      outOfDeliveryTitleAndDateList: outOfDeliveryList,
-                      deliveredTitleAndDateList: deliveredList,
-                    ),
-                  );
-                });
+            return status == 'returned'
+                ? Column(
+                    children: [
+                      kHeight30,
+                      kHeight30,
+                      kHeight30,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset('asset/images/returnimage.png'),
+                      ),
+                      kHeight10,
+                      DefaultTextStyle(
+                        style: const TextStyle(
+                          fontSize: 25.0,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        child: AnimatedTextKit(
+                          repeatForever: true,
+                          animatedTexts: [
+                            FlickerAnimatedText('Product returned'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                : ValueListenableBuilder(
+                    valueListenable: statusNotifer,
+                    builder: (context, value, child) {
+                      // print(status);
+                      return Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: OrderTracker(
+                          status: statusList[value],
+                          activeColor: Colors.green,
+                          inActiveColor: Colors.grey[300],
+                          orderTitleAndDateList: orderList,
+                          shippedTitleAndDateList: shippedList,
+                          outOfDeliveryTitleAndDateList: outOfDeliveryList,
+                          deliveredTitleAndDateList: deliveredList,
+                        ),
+                      );
+                    });
           }),
     );
   }

@@ -65,7 +65,7 @@ class ScreenPayment extends StatelessWidget {
                 ),
                 kHeight30,
                 InkWell(
-                  onTap: () => RozorPayConfirmation(context, size, productIds),
+                  onTap: () => RazorPayConfirmation(context, size, productIds),
                   child: const PaymentCard(
                       value: 'Razor Pay',
                       imageUrl: 'asset/images/razorpay.png'),
@@ -95,7 +95,7 @@ class ScreenPayment extends StatelessWidget {
   }
 
   // ignore: non_constant_identifier_names
-  Future<dynamic> RozorPayConfirmation(
+  Future<dynamic> RazorPayConfirmation(
       BuildContext context, Size size, List<dynamic> productIds) {
     return showDialog(
       context: context,
@@ -110,7 +110,7 @@ class ScreenPayment extends StatelessWidget {
                   icon: const Icon(Icons.cancel_outlined))
             ]),
             const Text(
-              'Continue with Rozorpay',
+              'Continue with Razorpay',
               textAlign: TextAlign.center,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
@@ -137,8 +137,8 @@ class ScreenPayment extends StatelessWidget {
               FloatingActionButton.extended(
                 backgroundColor: Colors.black,
                 onPressed: () {
-                  PaymentService.placeOrderRozorPay(int.parse(toalValue),
-                      addressId, productIds, 'placed', 'Rozorpay', context);
+                  PaymentService.placeOrderRazorPay(int.parse(toalValue),
+                      addressId, productIds, 'placed', 'Razorpay', context);
                 },
                 label: const Text('Place order',
                     style: TextStyle(

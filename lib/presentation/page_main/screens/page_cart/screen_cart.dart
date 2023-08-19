@@ -2,10 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hrx_store/core/Model/product.dart';
 import 'package:hrx_store/core/constant.dart';
-import 'package:hrx_store/presentation/page_delivery/screen_delivery.dart';
 import 'package:hrx_store/presentation/page_main/screens/page_cart/widgets.dart';
 import 'package:hrx_store/services/cart_service/cart_service.dart';
-import 'package:page_transition/page_transition.dart';
 
 class ScreenCart extends StatelessWidget {
   const ScreenCart({super.key});
@@ -126,25 +124,7 @@ class ScreenCart extends StatelessWidget {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(
-          Icons.arrow_circle_right_rounded,
-          color: Colors.white,
-        ),
-        backgroundColor: Colors.black,
-        onPressed: () {
-          Navigator.push(
-              context,
-              PageTransition(
-                  child: ScreenDelivery(fromCart: true),
-                  type: PageTransitionType.rightToLeftWithFade));
-        },
-        label: const Text(
-          'Proceed to Checkout',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
-        ),
-      ),
+      floatingActionButton: const CartProceedButton(),
     );
   }
 }

@@ -71,7 +71,7 @@ class PaymentService {
             type: PageTransitionType.fade));
   }
 
-  static placeOrderRozorPay(
+  static placeOrderRazorPay(
       int? totalValue,
       String? addressId,
       List<dynamic>? productId,
@@ -88,7 +88,7 @@ class PaymentService {
     );
 
     var options = {
-      'key': rozorPayKey,
+      'key': razorPayKey,
       'amount': totalValue! * 100,
       'name': 'HRX Store',
       'description': productId,
