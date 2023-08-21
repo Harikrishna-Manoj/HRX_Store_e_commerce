@@ -1,14 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:hrx_store/core/Model/product.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hrx_store/application/cart_bloc/cart_bloc_bloc.dart';
 import 'package:hrx_store/core/constant.dart';
 import 'package:hrx_store/presentation/page_main/screens/page_cart/widgets.dart';
-import 'package:hrx_store/services/cart_service/cart_service.dart';
 
 class ScreenCart extends StatelessWidget {
   const ScreenCart({super.key});
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      BlocProvider.of<CartBlocBloc>(context).add(GetAllCartProduct());
+    });
     ValueNotifier<bool> cartPageRebuildNotifer = ValueNotifier(true);
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -45,74 +47,33 @@ class ScreenCart extends StatelessWidget {
                         valueListenable: cartPageRebuildNotifer,
                         builder: (context, value, child) {
                           cartPageRebuildNotifer.value = true;
-                          return FutureBuilder<QuerySnapshot>(
-                              future: CartServices.getProductId(),
-                              builder: (context, cartSnapshot) {
-                                if (cartSnapshot.hasData) {
-                                  List<dynamic> productId = cartSnapshot
-                                      .data!.docs
-                                      .map((doc) => doc.get('productid'))
-                                      .toList();
-                                  // print(cartSnapshot.data);
-                                  // print(productId);
-                                  return FutureBuilder<QuerySnapshot>(
-                                      future: FirebaseFirestore.instance
-                                          .collection('product')
-                                          .get(),
-                                      builder: (context, productSnapshot) {
-                                        // print(productSnapshot.data);
-                                        if (productSnapshot.hasData) {
-                                          List<Product> productList =
-                                              productSnapshot.data!.docs
-                                                  .map((doc) =>
-                                                      Product.fromJson(
-                                                          doc.data() as Map<
-                                                              String, dynamic>))
-                                                  .where((product) => productId
-                                                      .contains(product.id))
-                                                  .toList();
-                                          // print(productList);
-                                          return productList.isNotEmpty
-                                              ? ListView.separated(
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    return SlideAction(
-                                                        cartPageRebuildNotifer:
-                                                            cartPageRebuildNotifer,
-                                                        index: index.toString(),
-                                                        id: productList[index]
-                                                            .id!,
-                                                        name: productList[index]
-                                                            .name,
-                                                        productSize:
-                                                            productList[index]
-                                                                .size!,
-                                                        price:
-                                                            productList[index]
-                                                                .price
-                                                                .toString(),
-                                                        image:
-                                                            productList[index]
-                                                                .imageurl!);
-                                                  },
-                                                  separatorBuilder:
-                                                      (context, index) =>
-                                                          kHeight10,
-                                                  itemCount: productList.length)
-                                              : const Center(
-                                                  child: Text('Cart is empty'),
-                                                );
-                                        }
-                                        return CartShimmer(size: size);
-                                      });
-                                }
-                                return const Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.black,
-                                    strokeWidth: 2,
-                                  ),
-                                );
-                              });
+                          return BlocBuilder<CartBlocBloc, CartBlocState>(
+                              builder: (context, state) {
+                            return state.cartProductList.isNotEmpty
+                                ? ListView.separated(
+                                    itemBuilder: (context, index) {
+                                      return SlideAction(
+                                          cartPageRebuildNotifer:
+                                              cartPageRebuildNotifer,
+                                          index: index.toString(),
+                                          id: state.cartProductList[index].id!,
+                                          name:
+                                              state.cartProductList[index].name,
+                                          productSize: state
+                                              .cartProductList[index].size!,
+                                          price: state
+                                              .cartProductList[index].price
+                                              .toString(),
+                                          image: state.cartProductList[index]
+                                              .imageurl!);
+                                    },
+                                    separatorBuilder: (context, index) =>
+                                        kHeight10,
+                                    itemCount: state.cartProductList.length)
+                                : const Center(
+                                    child: Text('Cart is empty'),
+                                  );
+                          });
                         }),
                   ),
                   kHeight30,

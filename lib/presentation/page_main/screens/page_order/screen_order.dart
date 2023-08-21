@@ -155,17 +155,16 @@ class ScreenOrder extends StatelessWidget {
                                                           kHeight10,
                                                 )
                                               : const Center(
-                                                  child: Text(
-                                                      'No delivered products'),
+                                                  child: Text('No orders'),
                                                 );
                                         }
                                         return const Center(
-                                          child: Text('No delivered products'),
+                                          child: Text('No orders'),
                                         );
                                       });
                                 }
                                 return const Center(
-                                  child: Text('No delivered products'),
+                                  child: Text('No orders'),
                                 );
                               });
                         }),

@@ -112,7 +112,12 @@ class OrderProductCard extends StatelessWidget {
                             mode: TextScrollMode.endless,
                             velocity:
                                 const Velocity(pixelsPerSecond: Offset(30, 0)),
-                            style: const TextStyle(color: Colors.green),
+                            style: TextStyle(
+                                color: orderStatus == 'returned'
+                                    ? Colors.red
+                                    : orderStatus == 'requested'
+                                        ? Colors.blue
+                                        : Colors.green),
                           ),
                         ),
                         Text(

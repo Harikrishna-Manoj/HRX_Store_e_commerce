@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hrx_store/presentation/comman_widgets/privacy_terms_condition.dart';
 import 'package:hrx_store/presentation/page_add_deabitcard/screen_add_card.dart';
@@ -19,7 +20,7 @@ import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:text_scroll/text_scroll.dart';
 
-import '../../../../core/Model/product.dart';
+import '../../../../application/home_bloc/home_bloc.dart';
 import '../../../../core/constant.dart';
 import '../../../../services/search_service/search_service.dart';
 import '../../../../services/wishlist_service/wishlist_service.dart';
@@ -201,8 +202,10 @@ class GridProducts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      BlocProvider.of<HomeBloc>(context).add(GetAllProduct());
+    });
     Size size = MediaQuery.sizeOf(context);
-
     return StreamBuilder(
         stream: SeacrchService.getProducts(),
         builder: (context, AsyncSnapshot snapshot) {
@@ -217,109 +220,125 @@ class GridProducts extends StatelessWidget {
             );
           }
 
-          List<DocumentSnapshot> documents = snapshot.data!;
-          List<Product> productList =
-              SeacrchService.convertToProductsList(documents);
-
-          return GridView.count(
-              physics: const BouncingScrollPhysics(),
-              shrinkWrap: true,
-              clipBehavior: Clip.none,
-              crossAxisCount: 2,
-              mainAxisSpacing: 20,
-              childAspectRatio: 1 / 1.45,
-              children: List.generate(
-                  productList.length,
-                  (index) => Padding(
-                        padding: const EdgeInsets.only(right: 10, left: 10),
-                        child: Stack(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                // print(productList[index].id);
-                                Navigator.push(
-                                    context,
-                                    PageTransition(
-                                        child: ScreenProductDetails(
-                                            id: productList[index].id!),
-                                        type: PageTransitionType.fade));
-                              },
-                              child: Card(
-                                elevation: 3,
-                                child: SizedBox(
-                                  width: size.width * 0.6,
-                                  height: size.height * 0.6,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Stack(children: [
-                                        Container(
-                                          width: size.width * 0.45,
-                                          height: size.width * 0.45,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
+          return BlocBuilder<HomeBloc, HomeState>(
+            builder: (context, state) {
+              return state.productList.isNotEmpty
+                  ? GridView.count(
+                      physics: const BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      clipBehavior: Clip.none,
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 20,
+                      childAspectRatio: 1 / 1.45,
+                      children: List.generate(
+                          state.productList.length,
+                          (index) => Padding(
+                                padding:
+                                    const EdgeInsets.only(right: 10, left: 10),
+                                child: Stack(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        // print(productList[index].id);
+                                        Navigator.push(
+                                            context,
+                                            PageTransition(
+                                                child: ScreenProductDetails(
+                                                    id: state.productList[index]
+                                                        .id!),
+                                                type: PageTransitionType.fade));
+                                      },
+                                      child: Card(
+                                        elevation: 3,
+                                        child: SizedBox(
+                                          width: size.width * 0.6,
+                                          height: size.height * 0.6,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Stack(children: [
+                                                Container(
+                                                  width: size.width * 0.45,
+                                                  height: size.width * 0.45,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                  ),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    child: Image.network(
+                                                      state.productList[index]
+                                                          .imageurl!,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                ),
+                                                FavouriteButton(
+                                                  id: state
+                                                      .productList[index].id!,
+                                                  amount: state
+                                                      .productList[index].price!
+                                                      .toString(),
+                                                  name: state
+                                                      .productList[index].name,
+                                                  imageurl: state
+                                                      .productList[index]
+                                                      .imageurl!,
+                                                  category: state
+                                                      .productList[index]
+                                                      .category!,
+                                                ),
+                                              ]),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 8.0, top: 5),
+                                                child: TextScroll(
+                                                  state.productList[index].name,
+                                                  mode: TextScrollMode.endless,
+                                                  velocity: const Velocity(
+                                                      pixelsPerSecond:
+                                                          Offset(30, 0)),
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 15),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 8.0, top: 5),
+                                                child: Text(
+                                                  "Size : ${state.productList[index].size!}",
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 8.0, top: 5),
+                                                child: Text(
+                                                  'Rate : ₹${state.productList[index].price}',
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 15),
+                                                ),
+                                              )
+                                            ],
                                           ),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            child: Image.network(
-                                              productList[index].imageurl!,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        FavouriteButton(
-                                          id: productList[index].id!,
-                                          amount: productList[index]
-                                              .price!
-                                              .toString(),
-                                          name: productList[index].name,
-                                          imageurl:
-                                              productList[index].imageurl!,
-                                          category:
-                                              productList[index].category!,
-                                        ),
-                                      ]),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 8.0, top: 5),
-                                        child: TextScroll(
-                                          productList[index].name,
-                                          mode: TextScrollMode.endless,
-                                          velocity: const Velocity(
-                                              pixelsPerSecond: Offset(30, 0)),
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 8.0, top: 5),
-                                        child: Text(
-                                          "Size : ${productList[index].size!}",
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 8.0, top: 5),
-                                        child: Text(
-                                          'Rate : ₹${productList[index].price}',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15),
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )));
+                              )))
+                  : const Center(
+                      child: Text('No products'),
+                    );
+            },
+          );
         });
   }
 }
@@ -809,27 +828,17 @@ class CurrentPosters extends StatefulWidget {
   State<CurrentPosters> createState() => _CurrentPostersState();
 }
 
-// List<String> ids = [];
 String? id;
 
 class _CurrentPostersState extends State<CurrentPosters> {
   getId() {
     FirebaseFirestore.instance.collection('poster').get().then(
       (QuerySnapshot querySnapshot) {
-        // if (id.isNotEmpty) {
-        //   id.removeLast();
-        //   // print(id);
-        //   // return;
-        // }
         for (var doc in querySnapshot.docs) {
-          // var orderData = doc.data();
-
           setState(() {
             id = doc.get('id');
           });
         }
-
-        // print(id);
       },
     );
   }

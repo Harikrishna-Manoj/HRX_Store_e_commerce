@@ -1,13 +1,11 @@
 part of 'home_bloc.dart';
 
-@immutable
-abstract class HomeState {
-  final List<DocumentSnapshot> document;
+class HomeState {
   final List<Product> productList;
 
-  const HomeState(this.document, this.productList);
+  HomeState({required this.productList});
 }
 
 class HomeInitial extends HomeState {
-  const HomeInitial(super.document, super.productList);
+  HomeInitial({super.productList = const []});
 }

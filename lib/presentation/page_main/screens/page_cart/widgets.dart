@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hrx_store/application/cart_bloc/cart_bloc_bloc.dart';
 import 'package:hrx_store/presentation/page_product_detail/screem_product_detail.dart';
 import 'package:hrx_store/services/address_service/address_service.dart';
 import 'package:hrx_store/services/cart_service/cart_service.dart';
@@ -187,8 +189,8 @@ class SlideAction extends StatelessWidget {
                             style: TextStyle(fontWeight: FontWeight.bold))),
                     TextButton(
                         onPressed: () {
-                          CartServices.reomveFromCart(
-                              productId: id, context: context);
+                          BlocProvider.of<CartBlocBloc>(context)
+                              .add(DeleteFromCart(productId: id));
                           dismiss = true;
                           Navigator.pop(context);
                           CartServices.checkingTheProductInCart(
