@@ -1,55 +1,21 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:hrx_store/core/Model/address.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hrx_store/presentation/page_address/screen_add_edit_address.dart';
 import 'package:hrx_store/presentation/page_address/widgets.dart';
-import 'package:hrx_store/services/address_service/address_service.dart';
 import 'package:page_transition/page_transition.dart';
 
-class ScreenAddress extends StatefulWidget {
+import '../../application/address_bloc/address_bloc.dart';
+
+class ScreenAddress extends StatelessWidget {
   const ScreenAddress({super.key});
 
   @override
-  State<ScreenAddress> createState() => _ScreenAddressState();
-}
-
-ValueNotifier<int> selectedAddressNotifier = ValueNotifier(0);
-
-class _ScreenAddressState extends State<ScreenAddress> {
-  List<Address> address = [];
-  final addressRef = FirebaseFirestore.instance
-      .collection('users')
-      .doc(AddressService.userID)
-      .collection('address');
-  getAddress() async {
-    address = await AddressService.displayAddress();
-    setState(() {
-      address = address;
-    });
-  }
-
-  getRadioIndex() {
-    addressRef.get().then((QuerySnapshot querySnapshot) {
-      final document = querySnapshot.docs;
-      for (var i = 0; i < document.length; i++) {
-        final boolValue = document[i]['isDefault'];
-        if (boolValue == true) {
-          selectedAddressNotifier.value = i;
-          // print(boolValue.toString());
-        }
-      }
-    });
-  }
-
-  @override
-  void initState() {
-    getAddress();
-    getRadioIndex();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      BlocProvider.of<AddressBloc>(context).add(GetAllAddress());
+    });
+    ValueNotifier<int> selectedAddressNotifier = ValueNotifier(0);
+
     bool isThisAddPage = false;
     Size size = MediaQuery.sizeOf(context);
     return Scaffold(
@@ -68,32 +34,38 @@ class _ScreenAddressState extends State<ScreenAddress> {
         ),
       ),
       body: SafeArea(
-        child: SizedBox(
-          height: size.height,
-          width: size.width,
-          child: address.isNotEmpty
-              ? SingleChildScrollView(
-                  child: Column(
-                      children: List.generate(
-                  address.length,
-                  (index) => AddressCard(
-                    address: address,
-                    index: index,
-                    addressType: address[index].addressType,
-                    selectedAddressNotifier: selectedAddressNotifier,
-                    id: address[index].id!,
-                    name: address[index].name,
-                    cityName: address[index].cityOrStreet,
-                    homeName: address[index].houseNoorName,
-                    phoneNumber: address[index].phoneNumber.toString(),
-                    state: address[index].state,
-                    pinCode: address[index].pinCode.toString(),
-                    isThisAddPage: isThisAddPage,
-                  ),
-                )))
-              : const Center(
-                  child: Text('Add address '),
-                ),
+        child: BlocBuilder<AddressBloc, AddressState>(
+          builder: (context, state) {
+            selectedAddressNotifier.value = state.index;
+            return SizedBox(
+              height: size.height,
+              width: size.width,
+              child: state.addressList.isNotEmpty
+                  ? SingleChildScrollView(
+                      child: Column(
+                          children: List.generate(
+                      state.addressList.length,
+                      (index) => AddressCard(
+                        address: state.addressList,
+                        index: index,
+                        addressType: state.addressList[index].addressType,
+                        selectedAddressNotifier: selectedAddressNotifier,
+                        id: state.addressList[index].id!,
+                        name: state.addressList[index].name,
+                        cityName: state.addressList[index].cityOrStreet,
+                        homeName: state.addressList[index].houseNoorName,
+                        phoneNumber:
+                            state.addressList[index].phoneNumber.toString(),
+                        state: state.addressList[index].state,
+                        pinCode: state.addressList[index].pinCode.toString(),
+                        isThisAddPage: isThisAddPage,
+                      ),
+                    )))
+                  : const Center(
+                      child: Text('Add address '),
+                    ),
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(

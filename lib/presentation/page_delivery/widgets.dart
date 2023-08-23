@@ -347,7 +347,7 @@ class AddressCard extends StatelessWidget {
                 }
                 List<DocumentSnapshot> documents = snapshot.data;
                 List<Address> addresList =
-                    DeliveryService.convertToProductsList(documents);
+                    DeliveryService.convertToAddresssList(documents);
                 List<Address> selectedAddress = addresList
                     .where((element) => element.isDefault == true)
                     .toList();
@@ -852,7 +852,7 @@ class FromProductPageProceedButton extends StatelessWidget {
                 }
                 List<DocumentSnapshot> documents = addresssnapshot.data;
                 List<Address> addresList =
-                    DeliveryService.convertToProductsList(documents);
+                    DeliveryService.convertToAddresssList(documents);
                 List<Address> selectedAddress = addresList
                     .where((element) => element.isDefault == true)
                     .toList();
@@ -1037,7 +1037,7 @@ class FromCartProceedButton extends StatelessWidget {
                 }
                 List<DocumentSnapshot> documents = addresssnapshot.data;
                 List<Address> addresList =
-                    DeliveryService.convertToProductsList(documents);
+                    DeliveryService.convertToAddresssList(documents);
                 List<Address> selectedAddress = addresList
                     .where((element) => element.isDefault == true)
                     .toList();

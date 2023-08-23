@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hrx_store/application/order_bloc/order_bloc.dart';
 import 'package:hrx_store/presentation/page_order_tracker/screen_order_tracker.dart';
-import 'package:hrx_store/services/order_service/order_service.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:text_scroll/text_scroll.dart';
@@ -160,14 +161,13 @@ class OrderProductCard extends StatelessWidget {
                                   TextButton(
                                       onPressed: () {
                                         if (reasonController.text.isNotEmpty) {
-                                          OrderService.returnOrder(
-                                              reasonController.text,
-                                              orderId,
-                                              userId,
-                                              productId);
+                                          BlocProvider.of<OrderBloc>(context)
+                                              .add(ReturnOrder(
+                                                  userId: userId,
+                                                  productId: productId,
+                                                  reason: reasonController.text,
+                                                  orderId: orderId));
                                           Navigator.pop(context);
-                                          OrderService.orderStatusUpdate(
-                                              orderId, 'requested');
                                         } else {
                                           Fluttertoast.showToast(
                                               msg: 'Reason required');
@@ -230,7 +230,10 @@ class OrderProductCard extends StatelessWidget {
                                             )),
                                         TextButton(
                                             onPressed: () {
-                                              OrderService.deleteOrder(orderId);
+                                              BlocProvider.of<OrderBloc>(
+                                                      context)
+                                                  .add(CancelOrder(
+                                                      orderId: orderId));
                                               Navigator.pop(context);
                                             },
                                             child: const Text('Canel order',

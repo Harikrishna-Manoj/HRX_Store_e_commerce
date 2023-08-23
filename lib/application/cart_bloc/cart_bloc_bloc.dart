@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hrx_store/core/Model/product.dart';
+// ignore: depend_on_referenced_packages
 import 'package:meta/meta.dart';
 
 part 'cart_bloc_event.dart';
@@ -27,6 +28,30 @@ class CartBlocBloc extends Bloc<CartBlocEvent, CartBlocState> {
           .toList();
       emit(CartBlocState(cartProductList: productList));
     });
+
+    on<IncreaseOrDereaseQuantity>((event, emit) async {
+      final userId = FirebaseAuth.instance.currentUser!.email;
+      final cartReference = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('cart')
+          .doc(event.productId);
+      final DocumentSnapshot docSnapshot = await cartReference.get();
+      final productCount = docSnapshot['productcount'];
+      if (event.increase == true) {
+        cartReference.update({
+          'productcount': productCount + 1,
+          'totalprice': docSnapshot['totalprice'] + event.price
+        });
+      } else {
+        if (productCount > 1) {
+          cartReference.update({
+            'productcount': productCount - 1,
+            'totalprice': docSnapshot['totalprice'] - event.price
+          });
+        }
+      }
+    });
     on<DeleteFromCart>((event, emit) async {
       try {
         final currentUser = FirebaseAuth.instance.currentUser;
@@ -37,6 +62,7 @@ class CartBlocBloc extends Bloc<CartBlocEvent, CartBlocState> {
             .collection('cart')
             .doc(event.productId);
         await cartCollection.delete();
+        add(GetAllCartProduct());
         // ignore: use_build_context_synchronously
         Fluttertoast.showToast(msg: 'Removed from cart');
       } catch (e) {

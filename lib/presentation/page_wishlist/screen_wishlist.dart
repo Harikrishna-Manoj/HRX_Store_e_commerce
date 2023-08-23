@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hrx_store/core/Model/product.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hrx_store/application/wishlist_bloc/wishlist_bloc.dart';
 import 'package:hrx_store/presentation/page_wishlist/widgets.dart';
-import 'package:hrx_store/services/wishlist_service/wishlist_service.dart';
 
 import '../../core/constant.dart';
 
@@ -12,10 +10,9 @@ class ScreenWishlist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ValueNotifier<bool> pageRefreashNotifier = ValueNotifier<bool>(false);
-    FirebaseAuth userInstance = FirebaseAuth.instance;
-    User? currentUser = userInstance.currentUser;
-    final userId = currentUser!.email;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      BlocProvider.of<WishlistBloc>(context).add(GetAllWishedProducts());
+    });
     Size size = MediaQuery.sizeOf(context);
     return Scaffold(
       appBar: AppBar(
@@ -43,47 +40,28 @@ class ScreenWishlist extends StatelessWidget {
               SizedBox(
                 height: size.height * 0.89,
                 width: size.width,
-                child: StreamBuilder(
-                  stream: WishlistService.wishlistgetProducts(userId!),
-                  builder: (context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasError) {
-                      return const Center(
-                        child: Text('Something went wrong'),
-                      );
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return WishListShimmer(size: size);
-                    }
-                    List<DocumentSnapshot> documents = snapshot.data!;
-                    List<WishlistProduct> wishlistProducts =
-                        WishlistService.convertToProductsList(documents);
+                child: BlocBuilder<WishlistBloc, WishlistState>(
+                  builder: (context, state) {
                     return Padding(
                       padding:
                           const EdgeInsets.only(left: 10, top: 10, right: 10),
-                      child: ValueListenableBuilder(
-                          valueListenable: pageRefreashNotifier,
-                          builder: (context, value, child) {
-                            return ListView.separated(
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  // print(wishlistProducts[index].id);
-                                  if (wishlistProducts.isEmpty) {
-                                    return const Center(
-                                      child: Text('No wished items'),
-                                    );
-                                  }
-                                  return WishlistProductCard(
-                                    pageRefreashNotifier: pageRefreashNotifier,
-                                    category: wishlistProducts[index].category!,
-                                    id: wishlistProducts[index].id!,
-                                    imageUrl: wishlistProducts[index].imageurl!,
-                                    name: wishlistProducts[index].name,
-                                    price: wishlistProducts[index].price!,
-                                  );
-                                },
-                                separatorBuilder: (context, index) => kHeight10,
-                                itemCount: wishlistProducts.length);
-                          }),
+                      child: state.wishList.isNotEmpty
+                          ? ListView.separated(
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return WishlistProductCard(
+                                  category: state.wishList[index].category!,
+                                  id: state.wishList[index].id!,
+                                  imageUrl: state.wishList[index].imageurl!,
+                                  name: state.wishList[index].name,
+                                  price: state.wishList[index].price!,
+                                );
+                              },
+                              separatorBuilder: (context, index) => kHeight10,
+                              itemCount: state.wishList.length)
+                          : const Center(
+                              child: Text('No wished items'),
+                            ),
                     );
                   },
                 ),

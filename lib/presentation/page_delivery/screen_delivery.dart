@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hrx_store/application/delivery_bloc/delivery_bloc.dart';
 import 'package:hrx_store/presentation/page_delivery/widgets.dart';
 
 import '../../core/constant.dart';
@@ -11,6 +12,9 @@ class ScreenDelivery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      GetAddress();
+    });
     Size size = MediaQuery.sizeOf(context);
     return Scaffold(
       appBar: AppBar(

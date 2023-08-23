@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hrx_store/application/address_bloc/address_bloc.dart';
 import 'package:hrx_store/core/Model/address.dart';
 import 'package:hrx_store/core/constant.dart';
 import 'package:hrx_store/presentation/page_address/screen_add_edit_address.dart';
@@ -172,8 +174,8 @@ $state - $pinCode'''),
                         selectedAddressIndex = index;
                         selectedAddressNotifier.value = index;
                       });
-                      AddressService.updateDefalultValue(
-                          address[index].id.toString());
+                      BlocProvider.of<AddressBloc>(context).add(
+                          UpdateIndex(addressId: address[index].id.toString()));
                     },
                   ),
                 );

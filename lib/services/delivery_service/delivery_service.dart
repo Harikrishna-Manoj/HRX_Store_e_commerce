@@ -13,7 +13,7 @@ class DeliveryService {
     yield docs;
   }
 
-  static List<Address> convertToProductsList(List<DocumentSnapshot> documents) {
+  static List<Address> convertToAddresssList(List<DocumentSnapshot> documents) {
     return documents.map((snapshot) {
       return Address.fromJson(snapshot.data() as Map<String, dynamic>);
     }).toList();

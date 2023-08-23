@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hrx_store/application/product_bloc/product_bloc.dart';
 import 'package:hrx_store/core/constant.dart';
 import 'package:hrx_store/presentation/page_delivery/screen_delivery.dart';
 import 'package:hrx_store/presentation/page_main/screens/page_cart/screen_cart.dart';
@@ -9,7 +11,6 @@ import 'package:hrx_store/presentation/page_product_detail/widgets.dart';
 import 'package:hrx_store/services/cart_service/cart_service.dart';
 import 'package:hrx_store/services/wishlist_service/wishlist_service.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:shimmer_animation/shimmer_animation.dart';
 
 // ignore: must_be_immutable
 class ScreenProductDetails extends StatefulWidget {
@@ -84,6 +85,9 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      BlocProvider.of<ProductBloc>(context).add(GetImages(id: widget.id));
+    });
     Size size = MediaQuery.sizeOf(context);
     return Scaffold(
       body: SafeArea(
@@ -95,50 +99,30 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
             children: [
               Stack(
                 children: [
-                  StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('product')
-                          .doc(widget.id)
-                          .snapshots(),
-                      builder: (context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasError) {
-                          return const Center(
-                            child: Text('Something went wrong'),
-                          );
-                        }
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Shimmer(
-                            color: Colors.black,
-                            child: SizedBox(
-                              width: size.width,
-                              height: size.height * .5,
-                            ),
-                          );
-                        }
-                        List<String> imageUrl = [];
-                        imageUrl.add(snapshot.data['imageurl']);
-                        for (var element in snapshot.data['multiimage']) {
-                          imageUrl.add(element);
-                        }
-                        return Stack(
-                          children: [
-                            ValueListenableBuilder(
-                                valueListenable: scrollIndexNotifer,
-                                builder: (context, value, child) {
-                                  return imageUrl.length == 1
-                                      ? SizedBox(
-                                          width: size.width,
-                                          child: Image.network(
-                                            imageUrl.first,
-                                            fit: BoxFit.cover,
-                                          ),
+                  BlocBuilder<ProductBloc, ProductState>(
+                      builder: (context, state) {
+                    return Stack(
+                      children: [
+                        ValueListenableBuilder(
+                            valueListenable: scrollIndexNotifer,
+                            builder: (context, value, child) {
+                              return state.imageUrl.length == 1
+                                  ? SizedBox(
+                                      width: size.width,
+                                      child: Image.network(
+                                        state.imageUrl.first,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                  : state.imageUrl.isEmpty
+                                      ? const Center(
+                                          child: Text('Loading..'),
                                         )
                                       : CarouselSlider.builder(
-                                          itemCount: imageUrl.length,
+                                          itemCount: state.imageUrl.length,
                                           itemBuilder:
                                               (context, index, realIndex) {
-                                            final urlImage = imageUrl[
+                                            final urlImage = state.imageUrl[
                                                 scrollIndexNotifer.value];
                                             return ScrollableImages(
                                                 urlImage: urlImage);
@@ -152,111 +136,100 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                                               scrollIndexNotifer.value = index;
                                             },
                                           ));
-                                }),
-                            Column(
+                            }),
+                        Column(
+                          children: [
+                            kHeight100,
+                            kHeight100,
+                            kHeight100,
+                            kHeight20,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                kHeight100,
-                                kHeight100,
-                                kHeight100,
-                                kHeight20,
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ValueListenableBuilder(
-                                      valueListenable: scrollIndexNotifer,
-                                      builder: (context, index, _) {
-                                        return Indicators(
-                                            scrollIndexNotifer:
-                                                scrollIndexNotifer,
-                                            imageUrl: imageUrl);
-                                      },
-                                    ),
-                                  ],
+                                ValueListenableBuilder(
+                                  valueListenable: scrollIndexNotifer,
+                                  builder: (context, index, _) {
+                                    return Indicators(
+                                        scrollIndexNotifer: scrollIndexNotifer,
+                                        imageUrl: state.imageUrl);
+                                  },
                                 ),
                               ],
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  CircleAvatar(
-                                    radius: 16,
-                                    backgroundColor: Colors.black,
-                                    child: IconButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        icon: const Icon(
-                                          Icons.arrow_back,
-                                          size: 15,
-                                          color: Colors.white,
-                                        )),
-                                  ),
-                                  ValueListenableBuilder(
-                                      valueListenable: addCartIconChangeNotifer,
-                                      builder: (context, value, child) {
-                                        return CircleAvatar(
-                                          radius: 15,
-                                          backgroundColor:
-                                              addCartIconChangeNotifer.value ==
-                                                      true
-                                                  ? Colors.black
-                                                  : Colors.white,
-                                          child: IconButton(
-                                              onPressed: () async {
-                                                checkingTheProductInCart(
-                                                    widget.id);
-                                                if (addCartIconChangeNotifer
-                                                        .value ==
-                                                    false) {
-                                                  // ignore: unrelated_type_equality_checks
-                                                  if (await CartServices
-                                                          .checkProductExistance(
-                                                              productId:
-                                                                  widget.id,
-                                                              colour: colorList[
-                                                                  choiceChipColorValue],
-                                                              size: snapshot.data[
-                                                                          'category'] ==
-                                                                      'Shoes'
-                                                                  ? sizeintList[
-                                                                      choiceChipSizeValue]
-                                                                  : sizeStringList[
-                                                                      choiceChipSizeValue],
-                                                              // totalValue: snapshot
-                                                              //     .data['price'],
-                                                              context:
-                                                                  context) ==
-                                                      true) {
-                                                    // ignore: use_build_context_synchronously
-                                                    await CartServices
-                                                        .addToCart(
-                                                      colour: colorList[
-                                                          choiceChipColorValue],
-                                                      context: context,
-                                                      productId: widget.id,
-                                                      size: snapshot.data[
-                                                                  'category'] ==
-                                                              'Shoes'
-                                                          ? sizeintList[
-                                                              choiceChipSizeValue]
-                                                          : sizeStringList[
-                                                              choiceChipSizeValue],
-                                                      totalValue: snapshot
-                                                          .data['price'],
-                                                    );
-                                                  }
-                                                } else {
-                                                  await CartServices
-                                                      .reomveFromCart(
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CircleAvatar(
+                                radius: 16,
+                                backgroundColor: Colors.black,
+                                child: IconButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    icon: const Icon(
+                                      Icons.arrow_back,
+                                      size: 15,
+                                      color: Colors.white,
+                                    )),
+                              ),
+                              ValueListenableBuilder(
+                                  valueListenable: addCartIconChangeNotifer,
+                                  builder: (context, value, child) {
+                                    return CircleAvatar(
+                                      radius: 15,
+                                      backgroundColor:
+                                          addCartIconChangeNotifer.value == true
+                                              ? Colors.black
+                                              : Colors.white,
+                                      child: IconButton(
+                                          onPressed: () async {
+                                            checkingTheProductInCart(widget.id);
+                                            if (addCartIconChangeNotifer
+                                                    .value ==
+                                                false) {
+                                              // ignore: unrelated_type_equality_checks
+                                              if (await CartServices
+                                                      .checkProductExistance(
                                                           productId: widget.id,
-                                                          context: context);
-                                                }
-                                              },
-                                              icon: addCartIconChangeNotifer
-                                                          .value ==
+                                                          colour: colorList[
+                                                              choiceChipColorValue],
+                                                          size: state.category ==
+                                                                  'Shoes'
+                                                              ? sizeintList[
+                                                                  choiceChipSizeValue]
+                                                              : sizeStringList[
+                                                                  choiceChipSizeValue],
+                                                          // totalValue: snapshot
+                                                          //     .data['price'],
+                                                          context: context) ==
+                                                  true) {
+                                                // ignore: use_build_context_synchronously
+                                                await CartServices.addToCart(
+                                                  colour: colorList[
+                                                      choiceChipColorValue],
+                                                  context: context,
+                                                  productId: widget.id,
+                                                  size: state.category ==
+                                                          'Shoes'
+                                                      ? sizeintList[
+                                                          choiceChipSizeValue]
+                                                      : sizeStringList[
+                                                          choiceChipSizeValue],
+                                                  totalValue: state.price,
+                                                );
+                                              }
+                                            } else {
+                                              await CartServices.reomveFromCart(
+                                                  productId: widget.id,
+                                                  context: context);
+                                            }
+                                          },
+                                          icon:
+                                              addCartIconChangeNotifer.value ==
                                                       true
                                                   ? const Icon(
                                                       Icons.trolley,
@@ -267,72 +240,64 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                                                       Icons.trolley,
                                                       size: 15,
                                                     )),
-                                        );
-                                      })
-                                ],
-                              ),
-                            ),
-                            ValueListenableBuilder(
-                                valueListenable: wishlistIconChangeNotifer,
-                                builder: (context, value, child) {
-                                  return Positioned(
-                                    bottom: 150,
-                                    right: 8,
-                                    child: CircleAvatar(
-                                      radius: 16,
-                                      backgroundColor:
-                                          wishlistIconChangeNotifer.value ==
-                                                  true
-                                              ? Colors.black
-                                              : Colors.white,
-                                      child: IconButton(
-                                          onPressed: () {
-                                            // print(snapshot.data['price']);
-                                            // print(snapshot.data['category']);
-                                            // print(snapshot.data['imageurl']);
-                                            // print(snapshot.data['name']);
-                                            // print(widget.id);
+                                    );
+                                  })
+                            ],
+                          ),
+                        ),
+                        ValueListenableBuilder(
+                            valueListenable: wishlistIconChangeNotifer,
+                            builder: (context, value, child) {
+                              return Positioned(
+                                bottom: 150,
+                                right: 8,
+                                child: CircleAvatar(
+                                  radius: 16,
+                                  backgroundColor:
+                                      wishlistIconChangeNotifer.value == true
+                                          ? Colors.black
+                                          : Colors.white,
+                                  child: IconButton(
+                                      onPressed: () {
+                                        // print(snapshot.data['price']);
+                                        // print(snapshot.data['category']);
+                                        // print(snapshot.data['imageurl']);
+                                        // print(snapshot.data['name']);
+                                        // print(widget.id);
 
-                                            checkingWishlistStatus(widget.id);
-                                            if (wishlistIconChangeNotifer
-                                                    .value ==
-                                                false) {
-                                              WishlistService.addToWishlist(
-                                                  amount: snapshot.data['price']
-                                                      .toString(),
-                                                  category:
-                                                      snapshot.data['category'],
-                                                  image:
-                                                      snapshot.data['imageurl'],
-                                                  productName:
-                                                      snapshot.data['name'],
-                                                  productId: widget.id,
-                                                  context: context);
-                                            } else {
-                                              WishlistService
-                                                  .reomveFromWishlist(
-                                                      productId: widget.id,
-                                                      context: context);
-                                            }
-                                          },
-                                          icon:
-                                              wishlistIconChangeNotifer.value ==
-                                                      true
-                                                  ? const Icon(
-                                                      Icons.favorite_outlined,
-                                                      color: Colors.red,
-                                                      size: 16,
-                                                    )
-                                                  : const Icon(
-                                                      Icons.favorite_border,
-                                                      size: 16,
-                                                    )),
-                                    ),
-                                  );
-                                }),
-                          ],
-                        );
-                      }),
+                                        checkingWishlistStatus(widget.id);
+                                        if (wishlistIconChangeNotifer.value ==
+                                            false) {
+                                          WishlistService.addToWishlist(
+                                              amount: state.price.toString(),
+                                              category: state.category,
+                                              image: state.image,
+                                              productName: state.name,
+                                              productId: widget.id,
+                                              context: context);
+                                        } else {
+                                          WishlistService.reomveFromWishlist(
+                                              productId: widget.id,
+                                              context: context);
+                                        }
+                                      },
+                                      icon: wishlistIconChangeNotifer.value ==
+                                              true
+                                          ? const Icon(
+                                              Icons.favorite_outlined,
+                                              color: Colors.red,
+                                              size: 16,
+                                            )
+                                          : const Icon(
+                                              Icons.favorite_border,
+                                              size: 16,
+                                            )),
+                                ),
+                              );
+                            }),
+                      ],
+                    );
+                  }),
                   StreamBuilder(
                       stream: FirebaseFirestore.instance
                           .collection('product')

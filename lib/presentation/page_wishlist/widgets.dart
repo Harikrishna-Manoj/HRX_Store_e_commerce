@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hrx_store/application/wishlist_bloc/wishlist_bloc.dart';
 import 'package:hrx_store/presentation/page_product_detail/screem_product_detail.dart';
-import 'package:hrx_store/presentation/page_wishlist/screen_wishlist.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:text_scroll/text_scroll.dart';
-
-import '../../services/wishlist_service/wishlist_service.dart';
 
 class WishlistProductCard extends StatelessWidget {
   const WishlistProductCard({
@@ -15,30 +14,12 @@ class WishlistProductCard extends StatelessWidget {
     required this.price,
     required this.category,
     required this.id,
-    required this.pageRefreashNotifier,
   });
   final String imageUrl;
   final String name;
   final String price;
   final String category;
   final String id;
-  final ValueNotifier pageRefreashNotifier;
-  // checkingWishlistStatus(String productId) async {
-  //   final currentUser = FirebaseAuth.instance.currentUser;
-  //   final userId = currentUser!.email;
-  //   final wishlistSnapshot = await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(userId)
-  //       .collection('wishlist')
-  //       .doc(productId)
-  //       .get();
-
-  //   if (wishlistSnapshot.exists) {
-  //     pageRefreashNotifier.value = false;
-  //   } else {
-  //     pageRefreashNotifier.value = true;
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -120,22 +101,9 @@ class WishlistProductCard extends StatelessWidget {
                             width: size.width,
                             height: 55,
                             child: TextButton.icon(
-                                onPressed: () async {
-                                  await WishlistService.reomveFromWishlist(
-                                      productId: id, context: context);
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.pushReplacement(
-                                      context,
-                                      PageRouteBuilder(
-                                        pageBuilder: (context, animation,
-                                                secondaryAnimation) =>
-                                            // ignore: prefer_const_constructors
-                                            const ScreenWishlist(),
-                                        transitionDuration: Duration.zero,
-                                        reverseTransitionDuration:
-                                            Duration.zero,
-                                      ));
-                                  // ignore: use_build_context_synchronously
+                                onPressed: () {
+                                  BlocProvider.of<WishlistBloc>(context)
+                                      .add(DeleteProductFromWishlist(id: id));
                                 },
                                 icon: const Icon(
                                   Icons.delete,

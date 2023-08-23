@@ -1,17 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:hrx_store/core/Model/return.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hrx_store/application/return_bloc/returns_bloc.dart';
 import 'package:hrx_store/presentation/page_returned_product/widgets.dart';
 
-import '../../core/Model/product.dart';
 import '../../core/constant.dart';
-import '../../services/order_service/order_service.dart';
 
 class ScreenReturnedProduct extends StatelessWidget {
   const ScreenReturnedProduct({super.key});
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      BlocProvider.of<ReturnsBloc>(context).add(GetAllReturnedProduct());
+    });
     Size size = MediaQuery.sizeOf(context);
     return Scaffold(
       appBar: AppBar(
@@ -31,84 +32,27 @@ class ScreenReturnedProduct extends StatelessWidget {
       body: SizedBox(
         height: size.height,
         width: size.width,
-        child: FutureBuilder<QuerySnapshot>(
-            future: OrderService.getProductIdFromReturnList(),
-            builder: (context, activeSnapshot) {
-              if (activeSnapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.black,
-                    strokeWidth: 2,
-                  ),
+        child:
+            BlocBuilder<ReturnsBloc, ReturnsState>(builder: (context, state) {
+          return state.returnList.isNotEmpty
+              ? ListView.separated(
+                  itemCount: state.returnList.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return ReturnedProductCard(
+                        imageUrl: state.returnedProductList[0].imageurl!,
+                        productName: state.returnedProductList[0].name,
+                        productSize: state.returnedProductList[0].size!,
+                        color: state.returnedProductList[0].color!,
+                        productId: state.returnList[index].productId,
+                        price: state.returnedProductList[0].price.toString());
+                  },
+                  separatorBuilder: (context, index) => kHeight10,
+                )
+              : const Center(
+                  child: Text('No returns'),
                 );
-              }
-              if (activeSnapshot.hasError) {
-                return const Center(
-                  child: Text('Something went wrong'),
-                );
-              }
-              if (activeSnapshot.hasData) {
-                final returnList = activeSnapshot.data!.docs
-                    .map(
-                      (doc) => ReturnModel.fromJson(
-                          doc.data() as Map<String, dynamic>),
-                    )
-                    .toList();
-                return FutureBuilder<QuerySnapshot>(
-                    future: OrderService.getProducts(),
-                    builder: (context, productSnapshot) {
-                      if (productSnapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return ReturnShimmer(size: size);
-                      }
-                      if (productSnapshot.hasError) {
-                        return const Center(
-                          child: Text('Something went wrong'),
-                        );
-                      }
-                      if (productSnapshot.hasData) {
-                        // print(returnList);
-                        return returnList.isNotEmpty
-                            ? ListView.separated(
-                                itemCount: returnList.length,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  List<Product> returnedProductList =
-                                      productSnapshot.data!.docs
-                                          .map(
-                                            (doc) => Product.fromJson(doc.data()
-                                                as Map<String, dynamic>),
-                                          )
-                                          .where((product) => returnList[index]
-                                              .productId
-                                              .contains(product.id!))
-                                          .toList();
-                                  return ReturnedProductCard(
-                                      imageUrl:
-                                          returnedProductList[0].imageurl!,
-                                      productName: returnedProductList[0].name,
-                                      productSize: returnedProductList[0].size!,
-                                      color: returnedProductList[0].color!,
-                                      productId: returnList[index].productId,
-                                      price: returnedProductList[0]
-                                          .price
-                                          .toString());
-                                },
-                                separatorBuilder: (context, index) => kHeight10,
-                              )
-                            : const Center(
-                                child: Text('No returns'),
-                              );
-                      }
-                      return const Center(
-                        child: Text('No returns'),
-                      );
-                    });
-              }
-              return const Center(
-                child: Text('No returns'),
-              );
-            }),
+        }),
       ),
     );
   }

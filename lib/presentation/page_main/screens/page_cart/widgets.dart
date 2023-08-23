@@ -303,12 +303,14 @@ class SlideAction extends StatelessWidget {
                                               if (snapshot
                                                       .data['productcount'] !=
                                                   1) {
-                                                CartServices
-                                                    .addOrRemoveProductQuaantity(
-                                                        id,
-                                                        false,
-                                                        int.parse(price),
-                                                        context);
+                                                BlocProvider.of<CartBlocBloc>(
+                                                        context)
+                                                    .add(
+                                                        IncreaseOrDereaseQuantity(
+                                                            productId: id,
+                                                            increase: false,
+                                                            price: int.parse(
+                                                                price)));
                                               } else {
                                                 showDialog(
                                                   context: context,
@@ -375,12 +377,14 @@ class SlideAction extends StatelessWidget {
                                         ),
                                         IconButton(
                                             onPressed: () {
-                                              CartServices
-                                                  .addOrRemoveProductQuaantity(
-                                                      id,
-                                                      true,
-                                                      int.parse(price),
-                                                      context);
+                                              BlocProvider.of<CartBlocBloc>(
+                                                      context)
+                                                  .add(
+                                                      IncreaseOrDereaseQuantity(
+                                                          productId: id,
+                                                          increase: true,
+                                                          price: int.parse(
+                                                              price)));
                                             },
                                             icon: const Icon(Icons.add)),
                                       ],

@@ -87,31 +87,6 @@ class CartServices {
     return querySnapShot;
   }
 
-  static addOrRemoveProductQuaantity(
-      String id, bool increment, int price, BuildContext context) async {
-    final userId = FirebaseAuth.instance.currentUser!.email;
-    final cartReference = FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('cart')
-        .doc(id);
-    final DocumentSnapshot docSnapshot = await cartReference.get();
-    final productCount = docSnapshot['productcount'];
-    if (increment == true) {
-      cartReference.update({
-        'productcount': productCount + 1,
-        'totalprice': docSnapshot['totalprice'] + price
-      });
-    } else {
-      if (productCount > 1) {
-        cartReference.update({
-          'productcount': productCount - 1,
-          'totalprice': docSnapshot['totalprice'] - price
-        });
-      }
-    }
-  }
-
   static int updateTotalPrice(List<dynamic> productPrices) {
     int totalValue = 0;
     for (var i = 0; i < productPrices.length; i++) {
