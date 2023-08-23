@@ -339,12 +339,13 @@ class SlideAction extends StatelessWidget {
                                                           onPressed: () {
                                                             Navigator.pop(
                                                                 context);
-                                                            CartServices
-                                                                .reomveFromCart(
+                                                            BlocProvider.of<
+                                                                        CartBlocBloc>(
+                                                                    context)
+                                                                .add(DeleteFromCart(
                                                                     productId:
-                                                                        id,
-                                                                    context:
-                                                                        context);
+                                                                        id));
+
                                                             CartServices
                                                                 .checkingTheProductInCart(
                                                                     id,
