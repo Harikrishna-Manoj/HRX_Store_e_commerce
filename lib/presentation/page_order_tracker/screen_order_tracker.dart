@@ -106,23 +106,49 @@ class ScreenOrderTracker extends StatelessWidget {
                       ),
                     ],
                   )
-                : ValueListenableBuilder(
-                    valueListenable: statusNotifer,
-                    builder: (context, value, child) {
-                      // print(status);
-                      return Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: OrderTracker(
-                          status: statusList[value],
-                          activeColor: Colors.green,
-                          inActiveColor: Colors.grey[300],
-                          orderTitleAndDateList: orderList,
-                          shippedTitleAndDateList: shippedList,
-                          outOfDeliveryTitleAndDateList: outOfDeliveryList,
-                          deliveredTitleAndDateList: deliveredList,
-                        ),
-                      );
-                    });
+                : status == 'requested'
+                    ? Column(
+                        children: [
+                          kHeight30,
+                          kHeight30,
+                          kHeight30,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset('asset/images/request.png'),
+                          ),
+                          kHeight10,
+                          DefaultTextStyle(
+                            style: const TextStyle(
+                              fontSize: 25.0,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            child: AnimatedTextKit(
+                              repeatForever: true,
+                              animatedTexts: [
+                                FlickerAnimatedText('Return request submitted'),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : ValueListenableBuilder(
+                        valueListenable: statusNotifer,
+                        builder: (context, value, child) {
+                          // print(status);
+                          return Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: OrderTracker(
+                              status: statusList[value],
+                              activeColor: Colors.green,
+                              inActiveColor: Colors.grey[300],
+                              orderTitleAndDateList: orderList,
+                              shippedTitleAndDateList: shippedList,
+                              outOfDeliveryTitleAndDateList: outOfDeliveryList,
+                              deliveredTitleAndDateList: deliveredList,
+                            ),
+                          );
+                        });
           }),
     );
   }

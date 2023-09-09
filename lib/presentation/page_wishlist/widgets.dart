@@ -104,6 +104,7 @@ class WishlistProductCard extends StatelessWidget {
                                 onPressed: () {
                                   BlocProvider.of<WishlistBloc>(context)
                                       .add(DeleteProductFromWishlist(id: id));
+                                  Navigator.pop(context);
                                 },
                                 icon: const Icon(
                                   Icons.delete,

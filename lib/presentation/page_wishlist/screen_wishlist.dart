@@ -42,27 +42,32 @@ class ScreenWishlist extends StatelessWidget {
                 width: size.width,
                 child: BlocBuilder<WishlistBloc, WishlistState>(
                   builder: (context, state) {
-                    return Padding(
-                      padding:
-                          const EdgeInsets.only(left: 10, top: 10, right: 10),
-                      child: state.wishList.isNotEmpty
-                          ? ListView.separated(
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                return WishlistProductCard(
-                                  category: state.wishList[index].category!,
-                                  id: state.wishList[index].id!,
-                                  imageUrl: state.wishList[index].imageurl!,
-                                  name: state.wishList[index].name,
-                                  price: state.wishList[index].price!,
-                                );
-                              },
-                              separatorBuilder: (context, index) => kHeight10,
-                              itemCount: state.wishList.length)
-                          : const Center(
-                              child: Text('No wished items'),
-                            ),
-                    );
+                    return state.isLoading == true
+                        ? WishListShimmer(size: size)
+                        : Padding(
+                            padding: const EdgeInsets.only(
+                                left: 10, top: 10, right: 10),
+                            child: state.wishList.isNotEmpty
+                                ? ListView.separated(
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) {
+                                      return WishlistProductCard(
+                                        category:
+                                            state.wishList[index].category!,
+                                        id: state.wishList[index].id!,
+                                        imageUrl:
+                                            state.wishList[index].imageurl!,
+                                        name: state.wishList[index].name,
+                                        price: state.wishList[index].price!,
+                                      );
+                                    },
+                                    separatorBuilder: (context, index) =>
+                                        kHeight10,
+                                    itemCount: state.wishList.length)
+                                : const Center(
+                                    child: Text('No wished items'),
+                                  ),
+                          );
                   },
                 ),
               ),

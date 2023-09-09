@@ -228,15 +228,15 @@ class SlideAction extends StatelessWidget {
                 children: [
                   Container(
                     margin: const EdgeInsets.only(left: 4, right: 15),
-                    height: size.height * 0.12,
-                    width: size.width * .23,
+                    height: size.height * 0.17,
+                    width: size.width * .26,
                     decoration:
                         BoxDecoration(borderRadius: BorderRadius.circular(13)),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(13),
                       child: Image.network(
                         image,
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),

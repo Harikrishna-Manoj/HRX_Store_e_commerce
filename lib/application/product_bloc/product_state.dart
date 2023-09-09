@@ -7,12 +7,14 @@ class ProductState {
   final int price;
   final String category;
   final String name;
+  final bool isLoading;
   const ProductState(
       {required this.image,
       required this.price,
       required this.category,
       required this.name,
-      required this.imageUrl});
+      required this.imageUrl,
+      required this.isLoading});
 }
 
 class ProductInitial extends ProductState {
@@ -21,5 +23,6 @@ class ProductInitial extends ProductState {
       super.image = '',
       super.price = 0,
       super.category = '',
-      super.name = ''});
+      super.name = '',
+      super.isLoading = false});
 }

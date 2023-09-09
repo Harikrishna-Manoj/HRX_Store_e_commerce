@@ -38,143 +38,108 @@ class ScreenSearch extends StatelessWidget {
           },
         ),
       ),
-      body: SafeArea(
-          child: SizedBox(
-        height: size.height,
-        width: size.width,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              BlocBuilder<SearchBloc, SearchState>(
-                builder: (context, state) {
-                  return state.searchList.isNotEmpty
-                      ? Column(
-                          children: List.generate(
-                            state.searchList.length,
-                            (index) => Padding(
-                              padding:
-                                  const EdgeInsets.only(right: 10, left: 10),
+      body: SafeArea(child: BlocBuilder<SearchBloc, SearchState>(
+        builder: (context, state) {
+          return state.isLoading == true
+              ? SearchShimmer(size: size)
+              : state.searchList.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: state.searchList.length,
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.only(right: 10, left: 10),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                PageTransition(
+                                    child: ScreenProductDetails(
+                                        id: state.searchList[index].id!),
+                                    type: PageTransitionType.fade));
+                          },
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            elevation: 5,
+                            child: Container(
+                              width: size.width,
+                              height: size.height * 0.13,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15)),
                               child: Stack(
                                 children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          PageTransition(
-                                              child: ScreenProductDetails(
-                                                  id: state
-                                                      .searchList[index].id!),
-                                              type: PageTransitionType.fade));
-                                    },
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                      elevation: 5,
-                                      child: Container(
-                                        width: size.width,
-                                        height: size.height * 0.13,
+                                  Row(
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.only(
+                                            left: 4, right: 15),
+                                        height: size.height * 0.12,
+                                        width: size.width * .23,
                                         decoration: BoxDecoration(
-                                            color: Colors.white,
                                             borderRadius:
-                                                BorderRadius.circular(15)),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              margin: const EdgeInsets.only(
-                                                  left: 4, right: 15),
-                                              height: size.height * 0.12,
-                                              width: size.width * .23,
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          13)),
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(13),
-                                                child: Image.network(
-                                                  state.searchList[index]
-                                                      .imageurl!,
-                                                  fit: BoxFit.fill,
-                                                ),
-                                              ),
-                                            ),
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(
-                                                  width: size.width * 0.45,
-                                                  child: TextScroll(
-                                                    state
-                                                        .searchList[index].name,
-                                                    mode:
-                                                        TextScrollMode.endless,
-                                                    velocity: const Velocity(
-                                                        pixelsPerSecond:
-                                                            Offset(30, 0)),
-                                                    style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 15),
-                                                  ),
-                                                ),
-                                                Text(
-                                                  state.searchList[index]
-                                                      .category!,
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.grey[600]),
-                                                ),
-                                                Text(
-                                                  "₹ ${state.searchList[index].price!}",
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.grey[600]),
-                                                ),
-                                              ],
-                                            ),
-                                            FavouriteButton(
-                                                id: state.searchList[index].id!,
-                                                imageurl: state
-                                                    .searchList[index]
-                                                    .imageurl!,
-                                                amount: state
-                                                    .searchList[index].price
-                                                    .toString(),
-                                                name: state
-                                                    .searchList[index].name,
-                                                category: state
-                                                    .searchList[index]
-                                                    .category!)
-                                          ],
+                                                BorderRadius.circular(13)),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(13),
+                                          child: Image.network(
+                                            state.searchList[index].imageurl!,
+                                            fit: BoxFit.fill,
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: size.width * 0.45,
+                                            child: TextScroll(
+                                              state.searchList[index].name,
+                                              mode: TextScrollMode.endless,
+                                              velocity: const Velocity(
+                                                  pixelsPerSecond:
+                                                      Offset(30, 0)),
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15),
+                                            ),
+                                          ),
+                                          Text(
+                                            state.searchList[index].category!,
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey[600]),
+                                          ),
+                                          Text(
+                                            "₹ ${state.searchList[index].price!}",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey[600]),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
                             ),
                           ),
-                        )
-                      : SizedBox(
-                          height: size.height,
-                          width: size.width,
-                          child: const Center(
-                            child: Text('No produts'),
-                          ),
-                        );
-                },
-              )
-            ],
-          ),
-        ),
+                        ),
+                      ),
+                    )
+                  : SizedBox(
+                      height: size.height,
+                      width: size.width,
+                      child: const Center(
+                        child: Text('No produts'),
+                      ),
+                    );
+        },
       )),
     );
   }

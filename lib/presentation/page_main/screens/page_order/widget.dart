@@ -62,8 +62,8 @@ class OrderProductCard extends StatelessWidget {
                 children: [
                   Container(
                     margin: const EdgeInsets.only(left: 4, right: 15),
-                    height: size.height * 0.12,
-                    width: size.width * .23,
+                    height: size.height * 0.19,
+                    width: size.width * .25,
                     decoration:
                         BoxDecoration(borderRadius: BorderRadius.circular(13)),
                     child: ClipRRect(
@@ -304,8 +304,8 @@ class OrderShimmer extends StatelessWidget {
                   color: Colors.black,
                   child: Container(
                     margin: const EdgeInsets.only(left: 4, right: 15),
-                    height: size.height * 0.12,
-                    width: size.width * .23,
+                    height: size.height * 0.19,
+                    width: size.width * .25,
                     decoration:
                         BoxDecoration(borderRadius: BorderRadius.circular(13)),
                   ),

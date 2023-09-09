@@ -13,9 +13,8 @@ part 'delivery_state.dart';
 
 class DeliveryBloc extends Bloc<DeliveryEvent, DeliveryState> {
   DeliveryBloc() : super(DeliveryInitial()) {
-    final userId = FirebaseAuth.instance.currentUser!.email;
-
     on<GetAddress>((event, emit) async {
+      final userId = FirebaseAuth.instance.currentUser!.email;
       final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)

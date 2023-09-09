@@ -1,6 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hrx_store/application/product_bloc/product_bloc.dart';
@@ -11,21 +10,17 @@ import 'package:hrx_store/presentation/page_product_detail/widgets.dart';
 import 'package:hrx_store/services/cart_service/cart_service.dart';
 import 'package:hrx_store/services/wishlist_service/wishlist_service.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 // ignore: must_be_immutable
-class ScreenProductDetails extends StatefulWidget {
-  const ScreenProductDetails({
+class ScreenProductDetails extends StatelessWidget {
+  ScreenProductDetails({
     super.key,
     required this.id,
   });
 
   final String id;
 
-  @override
-  State<ScreenProductDetails> createState() => _ScreenProductDetailsState();
-}
-
-class _ScreenProductDetailsState extends State<ScreenProductDetails> {
   List<String> colorList = ['Black', 'Red', 'Blue'];
   List<Color> colorsOfBox = [Colors.grey, Colors.red, Colors.blue];
   List<String> sizeintList = ['6', '7', '8', '9', '10', '11'];
@@ -43,50 +38,13 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
   ValueNotifier<bool> wishlistIconChangeNotifer = ValueNotifier<bool>(false);
 
   @override
-  void initState() {
-    super.initState();
-    checkingTheProductInCart(widget.id);
-    checkingWishlistStatus(widget.id);
-  }
-
-  checkingTheProductInCart(String productId) async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    final userId = currentUser!.email;
-    final cartSnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('cart')
-        .doc(productId)
-        .get();
-
-    if (cartSnapshot.exists) {
-      addCartIconChangeNotifer.value = true;
-    } else {
-      addCartIconChangeNotifer.value = false;
-    }
-  }
-
-  checkingWishlistStatus(String productId) async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    final userId = currentUser!.email;
-    final wishlistSnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('wishlist')
-        .doc(productId)
-        .get();
-
-    if (wishlistSnapshot.exists) {
-      wishlistIconChangeNotifer.value = true;
-    } else {
-      wishlistIconChangeNotifer.value = false;
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      BlocProvider.of<ProductBloc>(context).add(GetImages(id: widget.id));
+      BlocProvider.of<ProductBloc>(context).add(GetImages(id: id));
+      BlocProvider.of<ProductBloc>(context).add(CheckCart(
+          addCartIconChangeNotifer: addCartIconChangeNotifer, id: id));
+      BlocProvider.of<ProductBloc>(context).add(CheckWishList(
+          wishlistIconChangeNotifer: wishlistIconChangeNotifer, id: id));
     });
     Size size = MediaQuery.sizeOf(context);
     return Scaffold(
@@ -106,36 +64,44 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                         ValueListenableBuilder(
                             valueListenable: scrollIndexNotifer,
                             builder: (context, value, child) {
-                              return state.imageUrl.length == 1
-                                  ? SizedBox(
-                                      width: size.width,
-                                      child: Image.network(
-                                        state.imageUrl.first,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                  : state.imageUrl.isEmpty
-                                      ? const Center(
-                                          child: Text('Loading..'),
+                              return state.isLoading == true
+                                  ? Shimmer(
+                                      color: Colors.black,
+                                      child: SizedBox(
+                                        height: size.height,
+                                        width: size.width,
+                                      ))
+                                  : state.imageUrl.length == 1
+                                      ? SizedBox(
+                                          width: size.width,
+                                          child: Image.network(
+                                            state.imageUrl.first,
+                                            fit: BoxFit.cover,
+                                          ),
                                         )
-                                      : CarouselSlider.builder(
-                                          itemCount: state.imageUrl.length,
-                                          itemBuilder:
-                                              (context, index, realIndex) {
-                                            final urlImage = state.imageUrl[
-                                                scrollIndexNotifer.value];
-                                            return ScrollableImages(
-                                                urlImage: urlImage);
-                                          },
-                                          options: CarouselOptions(
-                                            height: size.height * .55,
-                                            aspectRatio: 3 / 4,
-                                            viewportFraction: 1,
-                                            autoPlay: true,
-                                            onPageChanged: (index, reason) {
-                                              scrollIndexNotifer.value = index;
-                                            },
-                                          ));
+                                      : state.imageUrl.isEmpty
+                                          ? const Center(
+                                              child: Text('Loading...'),
+                                            )
+                                          : CarouselSlider.builder(
+                                              itemCount: state.imageUrl.length,
+                                              itemBuilder:
+                                                  (context, index, realIndex) {
+                                                final urlImage = state.imageUrl[
+                                                    scrollIndexNotifer.value];
+                                                return ScrollableImages(
+                                                    urlImage: urlImage);
+                                              },
+                                              options: CarouselOptions(
+                                                height: size.height * .55,
+                                                aspectRatio: 3 / 4,
+                                                viewportFraction: 1,
+                                                autoPlay: true,
+                                                onPageChanged: (index, reason) {
+                                                  scrollIndexNotifer.value =
+                                                      index;
+                                                },
+                                              ));
                             }),
                         Column(
                           children: [
@@ -163,19 +129,15 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              CircleAvatar(
-                                radius: 16,
-                                backgroundColor: Colors.black,
-                                child: IconButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    icon: const Icon(
-                                      Icons.arrow_back,
-                                      size: 15,
-                                      color: Colors.white,
-                                    )),
-                              ),
+                              IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: const Icon(
+                                    Icons.arrow_circle_left,
+                                    size: 35,
+                                    color: Colors.black,
+                                  )),
                               ValueListenableBuilder(
                                   valueListenable: addCartIconChangeNotifer,
                                   builder: (context, value, child) {
@@ -187,14 +149,19 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                                               : Colors.white,
                                       child: IconButton(
                                           onPressed: () async {
-                                            checkingTheProductInCart(widget.id);
+                                            BlocProvider.of<ProductBloc>(
+                                                    context)
+                                                .add(CheckCart(
+                                                    addCartIconChangeNotifer:
+                                                        addCartIconChangeNotifer,
+                                                    id: id));
                                             if (addCartIconChangeNotifer
                                                     .value ==
                                                 false) {
                                               // ignore: unrelated_type_equality_checks
                                               if (await CartServices
                                                       .checkProductExistance(
-                                                          productId: widget.id,
+                                                          productId: id,
                                                           colour: colorList[
                                                               choiceChipColorValue],
                                                           size: state.category ==
@@ -212,7 +179,7 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                                                   colour: colorList[
                                                       choiceChipColorValue],
                                                   context: context,
-                                                  productId: widget.id,
+                                                  productId: id,
                                                   size: state.category ==
                                                           'Shoes'
                                                       ? sizeintList[
@@ -224,7 +191,7 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                                               }
                                             } else {
                                               await CartServices.reomveFromCart(
-                                                  productId: widget.id,
+                                                  productId: id,
                                                   context: context);
                                             }
                                           },
@@ -265,7 +232,11 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                                         // print(snapshot.data['name']);
                                         // print(widget.id);
 
-                                        checkingWishlistStatus(widget.id);
+                                        BlocProvider.of<ProductBloc>(context)
+                                            .add(CheckWishList(
+                                                wishlistIconChangeNotifer:
+                                                    wishlistIconChangeNotifer,
+                                                id: id));
                                         if (wishlistIconChangeNotifer.value ==
                                             false) {
                                           WishlistService.addToWishlist(
@@ -273,12 +244,11 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                                               category: state.category,
                                               image: state.image,
                                               productName: state.name,
-                                              productId: widget.id,
+                                              productId: id,
                                               context: context);
                                         } else {
                                           WishlistService.reomveFromWishlist(
-                                              productId: widget.id,
-                                              context: context);
+                                              productId: id, context: context);
                                         }
                                       },
                                       icon: wishlistIconChangeNotifer.value ==
@@ -301,7 +271,7 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                   StreamBuilder(
                       stream: FirebaseFirestore.instance
                           .collection('product')
-                          .doc(widget.id)
+                          .doc(id)
                           .snapshots(),
                       builder: (context, AsyncSnapshot snapshot) {
                         if (snapshot.hasError) {
@@ -523,7 +493,7 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
       floatingActionButton: StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('product')
-              .doc(widget.id)
+              .doc(id)
               .snapshots(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             return ValueListenableBuilder(
@@ -553,11 +523,15 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                             )
                           : InkWell(
                               onTap: () async {
-                                checkingTheProductInCart(widget.id);
+                                BlocProvider.of<ProductBloc>(context).add(
+                                    CheckCart(
+                                        addCartIconChangeNotifer:
+                                            addCartIconChangeNotifer,
+                                        id: id));
                                 if (addCartIconChangeNotifer.value == false) {
                                   // ignore: unrelated_type_equality_checks
                                   if (await CartServices.checkProductExistance(
-                                          productId: widget.id,
+                                          productId: id,
                                           colour:
                                               colorList[choiceChipColorValue],
                                           size: snapshot.data['category'] ==
@@ -572,14 +546,14 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                                     await CartServices.addToCart(
                                       colour: colorList[choiceChipColorValue],
                                       context: context,
-                                      productId: widget.id,
+                                      productId: id,
                                       size: sizeintList[choiceChipSizeValue],
                                       totalValue: snapshot.data['price'],
                                     );
                                   }
                                 } else {
                                   await CartServices.reomveFromCart(
-                                      productId: widget.id, context: context);
+                                      productId: id, context: context);
                                 }
                               },
                               child: const SmallActionButtons(
@@ -592,7 +566,7 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                       InkWell(
                         onTap: () async {
                           if (await CartServices.checkProductExistance(
-                                  productId: widget.id,
+                                  productId: id,
                                   colour: colorList[choiceChipColorValue],
                                   size: snapshot.data['category'] == 'Shoes'
                                       ? sizeintList[choiceChipSizeValue]
@@ -604,8 +578,8 @@ class _ScreenProductDetailsState extends State<ScreenProductDetails> {
                             Navigator.push(
                                 context,
                                 PageTransition(
-                                    child: ScreenDelivery(
-                                        fromCart: false, id: widget.id),
+                                    child:
+                                        ScreenDelivery(fromCart: false, id: id),
                                     type: PageTransitionType.rightToLeft));
                           }
                         },

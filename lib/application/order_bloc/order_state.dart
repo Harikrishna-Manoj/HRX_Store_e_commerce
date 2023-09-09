@@ -4,11 +4,17 @@ part of 'order_bloc.dart';
 class OrderState {
   final List<OrderModel> orderList;
   final List<Product> orderProductList;
-
-  const OrderState({required this.orderList, required this.orderProductList});
+  final bool isLoading;
+  const OrderState({
+    required this.orderList,
+    required this.orderProductList,
+    required this.isLoading,
+  });
 }
 
 final class OrderInitial extends OrderState {
   const OrderInitial(
-      {super.orderList = const [], super.orderProductList = const []});
+      {super.orderList = const [],
+      super.orderProductList = const [],
+      super.isLoading = false});
 }

@@ -15,6 +15,7 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
   WishlistBloc() : super(const WishlistInitial()) {
     final userId = FirebaseAuth.instance.currentUser!.email;
     on<GetAllWishedProducts>((event, emit) async {
+      emit(const WishlistState(wishList: [], isLoading: true));
       final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
@@ -23,7 +24,7 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
       final List<DocumentSnapshot> docs = querySnapshot.docs.toList();
       List<WishlistProduct> wishlistProducts =
           WishlistService.convertToProductsList(docs);
-      emit(WishlistState(wishList: wishlistProducts));
+      emit(WishlistState(wishList: wishlistProducts, isLoading: false));
     });
     on<DeleteProductFromWishlist>((event, emit) async {
       try {

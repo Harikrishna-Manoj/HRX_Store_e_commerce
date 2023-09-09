@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hrx_store/presentation/comman_widgets/privacy_terms_condition.dart';
-import 'package:hrx_store/presentation/page_add_deabitcard/screen_add_card.dart';
 import 'package:hrx_store/presentation/page_categories/screen_categories.dart';
 import 'package:hrx_store/presentation/page_main/screens/page_profile/screen_profile.dart';
 import 'package:hrx_store/presentation/page_product_detail/screem_product_detail.dart';
@@ -537,19 +536,19 @@ class TransparentDrawer extends StatelessWidget {
               itemName: "My Wishlist",
             ),
           ),
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  PageTransition(
-                      child: const ScreenAddCard(),
-                      type: PageTransitionType.fade));
-            },
-            child: const DrawerItems(
-              iteamIcon: Icons.credit_card,
-              itemName: "My Card",
-            ),
-          ),
+          // InkWell(
+          //   onTap: () {
+          //     Navigator.push(
+          //         context,
+          //         PageTransition(
+          //             child: const ScreenAddCard(),
+          //             type: PageTransitionType.fade));
+          //   },
+          //   child: const DrawerItems(
+          //     iteamIcon: Icons.credit_card,
+          //     itemName: "My Card",
+          //   ),
+          // ),
           InkWell(
             onTap: () {
               Navigator.push(

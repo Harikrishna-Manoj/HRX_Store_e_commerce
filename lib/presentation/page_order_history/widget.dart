@@ -47,7 +47,6 @@ class HistoryProductCard extends StatelessWidget {
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(15)),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
                   margin: const EdgeInsets.only(left: 4, right: 15),
@@ -68,37 +67,40 @@ class HistoryProductCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Text(
-                      'Quantity: $count',
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                    Text(
-                      'Size : $productSize',
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                    Text(
-                      'Colour: $color',
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                    Text(
-                      '₹ $price',
+                      '$productName  ₹$price',
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),
+                    Text(
+                      'Quantity: $count',
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Size : $productSize, ',
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                        Text(
+                          orderStatus,
+                          style: const TextStyle(color: Colors.green),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Colour: $color, ',
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                        Text(
+                          orderDate,
+                          style: const TextStyle(color: Colors.blue),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(
-                      orderStatus,
-                      style: const TextStyle(color: Colors.green),
-                    ),
-                    Text(
-                      orderDate,
-                      style: const TextStyle(color: Colors.blue),
-                    ),
-                  ],
-                )
               ],
             )),
       ),

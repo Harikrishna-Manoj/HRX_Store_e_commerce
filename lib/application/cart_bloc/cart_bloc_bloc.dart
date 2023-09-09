@@ -12,6 +12,7 @@ part 'cart_bloc_state.dart';
 class CartBlocBloc extends Bloc<CartBlocEvent, CartBlocState> {
   CartBlocBloc() : super(CartBlocInitial()) {
     on<GetAllCartProduct>((event, emit) async {
+      emit(CartBlocState(cartProductList: [], isLoading: true));
       final userId = FirebaseAuth.instance.currentUser!.email;
       final querySnapShot = await FirebaseFirestore.instance
           .collection('users')
@@ -26,7 +27,7 @@ class CartBlocBloc extends Bloc<CartBlocEvent, CartBlocState> {
           .map((doc) => Product.fromJson(doc.data()))
           .where((product) => productId.contains(product.id))
           .toList();
-      emit(CartBlocState(cartProductList: productList));
+      emit(CartBlocState(cartProductList: productList, isLoading: false));
     });
 
     on<IncreaseOrDereaseQuantity>((event, emit) async {

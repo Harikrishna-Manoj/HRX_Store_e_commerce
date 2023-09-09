@@ -13,6 +13,8 @@ part 'orderhistory_state.dart';
 class OrderhistoryBloc extends Bloc<OrderhistoryEvent, OrderhistoryState> {
   OrderhistoryBloc() : super(const OrderhistoryInitial()) {
     on<GetAllOrderHistory>((event, emit) async {
+      emit(const OrderhistoryState(
+          orderList: [], orderProductList: [], isLoading: true));
       final FirebaseAuth auth = FirebaseAuth.instance;
       final User? user = auth.currentUser;
       final userID = user!.email;
@@ -38,7 +40,9 @@ class OrderhistoryBloc extends Bloc<OrderhistoryEvent, OrderhistoryState> {
             .toList();
       }
       emit(OrderhistoryState(
-          orderList: orderList, orderProductList: orderProductList));
+          orderList: orderList,
+          orderProductList: orderProductList,
+          isLoading: false));
     });
   }
 }

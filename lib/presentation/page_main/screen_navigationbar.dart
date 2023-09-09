@@ -46,6 +46,7 @@ class BottomNavigationWidget extends StatelessWidget {
               bottom: 8,
               top: 3),
           child: GNav(
+            rippleColor: Colors.black38,
             backgroundColor: Colors.transparent,
             onTabChange: (value) {
               indexChangingNotifer.value = value;

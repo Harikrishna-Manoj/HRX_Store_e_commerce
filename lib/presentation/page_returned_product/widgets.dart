@@ -41,7 +41,6 @@ class ReturnedProductCard extends StatelessWidget {
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(15)),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
                   margin: const EdgeInsets.only(left: 4, right: 15),
@@ -60,6 +59,9 @@ class ReturnedProductCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(
+                      height: 5,
+                    ),
                     Text(
                       productName,
                       style: const TextStyle(
@@ -69,9 +71,10 @@ class ReturnedProductCard extends StatelessWidget {
                       'Size : $productSize',
                       style: const TextStyle(color: Colors.grey),
                     ),
-                    Text(
-                      'Colour: $color',
-                      style: const TextStyle(color: Colors.grey),
+                    const Text(
+                      'Returned',
+                      style: TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       '₹ $price',
@@ -80,11 +83,6 @@ class ReturnedProductCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const Text(
-                  'Returned',
-                  style:
-                      TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                )
               ],
             )),
       ),
@@ -111,7 +109,7 @@ class ReturnShimmer extends StatelessWidget {
         elevation: 5,
         child: Container(
             width: size.width,
-            height: size.height * 0.20,
+            height: size.height * 0.13,
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(15)),
             child: Row(

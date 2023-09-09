@@ -12,6 +12,8 @@ part 'returns_state.dart';
 class ReturnsBloc extends Bloc<ReturnsEvent, ReturnsState> {
   ReturnsBloc() : super(const ReturnsInitial()) {
     on<GetAllReturnedProduct>((event, emit) async {
+      emit(const ReturnsState(
+          returnList: [], returnedProductList: [], isLoading: true));
       final FirebaseAuth auth = FirebaseAuth.instance;
       final User? user = auth.currentUser;
       final userID = user!.email;
@@ -36,7 +38,9 @@ class ReturnsBloc extends Bloc<ReturnsEvent, ReturnsState> {
             .toList();
       }
       emit(ReturnsState(
-          returnList: returnList, returnedProductList: returnedProductList));
+          returnList: returnList,
+          returnedProductList: returnedProductList,
+          isLoading: false));
     });
   }
 }

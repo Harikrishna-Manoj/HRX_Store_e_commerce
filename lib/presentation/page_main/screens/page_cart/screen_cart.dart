@@ -49,30 +49,34 @@ class ScreenCart extends StatelessWidget {
                           cartPageRebuildNotifer.value = true;
                           return BlocBuilder<CartBlocBloc, CartBlocState>(
                               builder: (context, state) {
-                            return state.cartProductList.isNotEmpty
-                                ? ListView.separated(
-                                    itemBuilder: (context, index) {
-                                      return SlideAction(
-                                          cartPageRebuildNotifer:
-                                              cartPageRebuildNotifer,
-                                          index: index.toString(),
-                                          id: state.cartProductList[index].id!,
-                                          name:
-                                              state.cartProductList[index].name,
-                                          productSize: state
-                                              .cartProductList[index].size!,
-                                          price: state
-                                              .cartProductList[index].price
-                                              .toString(),
-                                          image: state.cartProductList[index]
-                                              .imageurl!);
-                                    },
-                                    separatorBuilder: (context, index) =>
-                                        kHeight10,
-                                    itemCount: state.cartProductList.length)
-                                : const Center(
-                                    child: Text('Cart is empty'),
-                                  );
+                            return state.isLoading == true
+                                ? CartShimmer(size: size)
+                                : state.cartProductList.isNotEmpty
+                                    ? ListView.separated(
+                                        itemBuilder: (context, index) {
+                                          return SlideAction(
+                                              cartPageRebuildNotifer:
+                                                  cartPageRebuildNotifer,
+                                              index: index.toString(),
+                                              id: state
+                                                  .cartProductList[index].id!,
+                                              name: state
+                                                  .cartProductList[index].name,
+                                              productSize: state
+                                                  .cartProductList[index].size!,
+                                              price: state
+                                                  .cartProductList[index].price
+                                                  .toString(),
+                                              image: state
+                                                  .cartProductList[index]
+                                                  .imageurl!);
+                                        },
+                                        separatorBuilder: (context, index) =>
+                                            kHeight10,
+                                        itemCount: state.cartProductList.length)
+                                    : const Center(
+                                        child: Text('Cart is empty'),
+                                      );
                           });
                         }),
                   ),

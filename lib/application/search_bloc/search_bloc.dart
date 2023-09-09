@@ -12,11 +12,12 @@ part 'search_state.dart';
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc() : super(const SearchInitial()) {
     on<GetAllProducts>((event, emit) async {
+      emit(const SearchState(searchList: [], isLoading: true));
       final QuerySnapshot querySnapshot =
           await FirebaseFirestore.instance.collection('product').get();
       final List<DocumentSnapshot> docs = querySnapshot.docs.toList();
       List<Product> productList = SeacrchService.convertToProductsList(docs);
-      emit(SearchState(searchList: productList));
+      emit(SearchState(searchList: productList, isLoading: false));
     });
     on<SearchProduct>((event, emit) async {
       final QuerySnapshot querySnapshot =
@@ -32,7 +33,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         }
         return false;
       }).toList();
-      emit(SearchState(searchList: searchList));
+      emit(SearchState(searchList: searchList, isLoading: false));
     });
   }
 }

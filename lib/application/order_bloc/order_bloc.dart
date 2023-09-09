@@ -13,6 +13,8 @@ part 'order_state.dart';
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
   OrderBloc() : super(const OrderInitial()) {
     on<GetAllOrders>((event, emit) async {
+      emit(const OrderState(
+          orderList: [], orderProductList: [], isLoading: true));
       final FirebaseAuth auth = FirebaseAuth.instance;
       final User? user = auth.currentUser;
       final userID = user!.email;
@@ -36,8 +38,10 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
             .where((product) => orderList[i].productId!.contains(product.id))
             .toList();
       }
-      emit(
-          OrderState(orderList: orderList, orderProductList: orderProductList));
+      emit(OrderState(
+          orderList: orderList,
+          orderProductList: orderProductList,
+          isLoading: false));
     });
     on<ReturnOrder>((event, emit) async {
       final returnRef = FirebaseFirestore.instance.collection('return').doc();

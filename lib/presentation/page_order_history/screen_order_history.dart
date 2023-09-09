@@ -44,32 +44,38 @@ class ScreenOrderHistory extends StatelessWidget {
                   width: size.width,
                   child: BlocBuilder<OrderhistoryBloc, OrderhistoryState>(
                       builder: (context, state) {
-                    return state.orderList.isNotEmpty
-                        ? ListView.separated(
-                            itemCount: state.orderList.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return HistoryProductCard(
-                                  price: state.orderProductList[0].price
-                                      .toString(),
-                                  productId: state.orderList[index].productId!,
-                                  orderStatus:
-                                      state.orderList[index].orderStatus!,
-                                  orderDate: state.orderList[index].orderDate!,
-                                  orderId: state.orderList[index].orderId!,
-                                  color: state.orderProductList[0].color!,
-                                  productName: state.orderProductList[0].name,
-                                  count:
-                                      state.orderList[index].count.toString(),
-                                  productSize: state.orderProductList[0].size!,
-                                  imageUrl:
-                                      state.orderProductList[0].imageurl!);
-                            },
-                            separatorBuilder: (context, index) => kHeight10,
-                          )
-                        : const Center(
-                            child: Text('No delivered products'),
-                          );
+                    return state.isLoading == true
+                        ? OrderHistoryShimmer(size: size)
+                        : state.orderList.isNotEmpty
+                            ? ListView.separated(
+                                itemCount: state.orderList.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return HistoryProductCard(
+                                      price: state.orderProductList[0].price
+                                          .toString(),
+                                      productId:
+                                          state.orderList[index].productId!,
+                                      orderStatus:
+                                          state.orderList[index].orderStatus!,
+                                      orderDate:
+                                          state.orderList[index].orderDate!,
+                                      orderId: state.orderList[index].orderId!,
+                                      color: state.orderProductList[0].color!,
+                                      productName:
+                                          state.orderProductList[0].name,
+                                      count: state.orderList[index].count
+                                          .toString(),
+                                      productSize:
+                                          state.orderProductList[0].size!,
+                                      imageUrl:
+                                          state.orderProductList[0].imageurl!);
+                                },
+                                separatorBuilder: (context, index) => kHeight10,
+                              )
+                            : const Center(
+                                child: Text('No history'),
+                              );
                   }),
                 ),
               ],
