@@ -352,82 +352,91 @@ class AddressCard extends StatelessWidget {
                     .where((element) => element.isDefault == true)
                     .toList();
                 // print(selectedAddress);
-                return SizedBox(
-                  width: size.width,
-                  height: size.height * 0.20,
-                  child: ListView.builder(
-                    itemCount: selectedAddress.length,
-                    itemBuilder: (context, index) {
-                      //   print(
-                      //       '''${selectedAddress[index].houseNoorName}(H),${selectedAddress[index].cityOrStreet},
-                      // ${selectedAddress[index].state} - ${selectedAddress[index].pinCode.toString()}''');
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Container(
-                            width: size.width,
-                            height: size.height * 0.18,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15)),
-                            child: Row(
-                              children: [
-                                const SizedBox(
-                                  width: 15,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    kHeight15,
-                                    Row(
-                                      children: [
-                                        TextScroll(
-                                          selectedAddress[index].name,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 8.0),
-                                          child: Container(
-                                            height: 20,
-                                            width: 80,
-                                            decoration: BoxDecoration(
-                                                color: Colors.grey[300],
-                                                borderRadius:
-                                                    BorderRadius.circular(5)),
-                                            child: Center(
-                                              child: Text(
-                                                selectedAddress[index]
-                                                    .addressType,
+                return selectedAddress.isNotEmpty
+                    ? SizedBox(
+                        width: size.width,
+                        height: size.height * 0.20,
+                        child: ListView.builder(
+                          itemCount: selectedAddress.length,
+                          itemBuilder: (context, index) {
+                            //   print(
+                            //       '''${selectedAddress[index].houseNoorName}(H),${selectedAddress[index].cityOrStreet},
+                            // ${selectedAddress[index].state} - ${selectedAddress[index].pinCode.toString()}''');
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Container(
+                                  width: size.width,
+                                  height: size.height * 0.18,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 15,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          kHeight15,
+                                          Row(
+                                            children: [
+                                              TextScroll(
+                                                selectedAddress[index].name,
                                                 style: const TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    fontSize: 12),
+                                                    fontSize: 15),
                                               ),
-                                            ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 8.0),
+                                                child: Container(
+                                                  height: 20,
+                                                  width: 80,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.grey[300],
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5)),
+                                                  child: Center(
+                                                    child: Text(
+                                                      selectedAddress[index]
+                                                          .addressType,
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 12),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    kHeight15,
-                                    Text(
-                                        '''${selectedAddress[index].houseNoorName}(H),${selectedAddress[index].cityOrStreet},
+                                          kHeight15,
+                                          Text(
+                                              '''${selectedAddress[index].houseNoorName}(H),${selectedAddress[index].cityOrStreet},
 ${selectedAddress[index].state} - ${selectedAddress[index].pinCode.toString()}'''),
-                                    kHeight15,
-                                    Text(
-                                        '${selectedAddress[index].phoneNumber}')
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 50,
-                                ),
-                              ],
-                            )),
+                                          kHeight15,
+                                          Text(
+                                              '${selectedAddress[index].phoneNumber}')
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        width: 50,
+                                      ),
+                                    ],
+                                  )),
+                            );
+                          },
+                        ),
+                      )
+                    : const Text(
+                        'No address, select one',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.red),
                       );
-                    },
-                  ),
-                );
               });
         });
   }
@@ -450,7 +459,7 @@ class SubTitles extends StatelessWidget {
         IconButton(
             tooltip: 'Change Address',
             onPressed: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                   context,
                   PageTransition(
                       child: const ScreenAddress(),

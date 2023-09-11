@@ -31,13 +31,14 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
           await FirebaseFirestore.instance.collection('product').get();
       List<Product> orderProductList = [];
       for (var i = 0; i < orderList.length; i++) {
-        orderProductList = productSnapshot.docs
+        orderProductList.addAll(productSnapshot.docs
             .map(
               (doc) => Product.fromJson(doc.data()),
             )
             .where((product) => orderList[i].productId!.contains(product.id))
-            .toList();
+            .toList());
       }
+      // print(orderList.length);
       emit(OrderState(
           orderList: orderList,
           orderProductList: orderProductList,

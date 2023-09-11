@@ -8,7 +8,6 @@ import '../../application/address_bloc/address_bloc.dart';
 
 class ScreenAddress extends StatelessWidget {
   const ScreenAddress({super.key});
-
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -22,7 +21,9 @@ class ScreenAddress extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+            },
             icon: const Icon(
               Icons.arrow_circle_left_rounded,
               size: 35,

@@ -92,28 +92,36 @@ class WishlistProductCard extends StatelessWidget {
                 IconButton(
                     tooltip: 'Delete product',
                     onPressed: () {
-                      showBottomSheet(
+                      showDialog(
                         // elevation: 20,
                         context: context,
                         builder: (context) {
-                          return Container(
-                            color: Colors.grey[100],
-                            width: size.width,
-                            height: 55,
-                            child: TextButton.icon(
-                                onPressed: () {
-                                  BlocProvider.of<WishlistBloc>(context)
-                                      .add(DeleteProductFromWishlist(id: id));
-                                  Navigator.pop(context);
-                                },
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.black,
-                                ),
-                                label: const Text(
-                                  'Remove from wishlist',
-                                  style: TextStyle(color: Colors.black),
-                                )),
+                          return AlertDialog(
+                            content: const Text(
+                              'Remove from wishlist ?',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            actions: [
+                              TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text(
+                                    'No',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  )),
+                              TextButton(
+                                  onPressed: () {
+                                    BlocProvider.of<WishlistBloc>(context)
+                                        .add(DeleteProductFromWishlist(id: id));
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text(
+                                    'Remove',
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold),
+                                  ))
+                            ],
                           );
                         },
                       );

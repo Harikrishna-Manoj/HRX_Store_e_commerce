@@ -67,11 +67,17 @@ class ScreenLogin extends StatelessWidget {
                       showSnackbar(
                           'Password must contain more than 6 letters', context);
                     } else {
-                      FirebaseAuthentication.logIn(
-                          context: context,
-                          formKey: _formKey,
-                          emailController: emailController,
-                          passwordController: passwordController);
+                      if (RegExp(
+                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                          .hasMatch(emailController.text)) {
+                        FirebaseAuthentication.logIn(
+                            context: context,
+                            formKey: _formKey,
+                            emailController: emailController,
+                            passwordController: passwordController);
+                      } else {
+                        showSnackbar('Email format is incorrect', context);
+                      }
                     }
                   },
                   child: const ActionButtons(

@@ -25,7 +25,9 @@ class ScreenDelivery extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+            },
             icon: const Icon(
               Icons.arrow_circle_left,
               size: 35,

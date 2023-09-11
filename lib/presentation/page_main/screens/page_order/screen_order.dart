@@ -53,11 +53,14 @@ class ScreenOrder extends StatelessWidget {
                                   itemCount: state.orderList.length,
                                   shrinkWrap: true,
                                   itemBuilder: (context, index) {
+                                    // print(state.orderList);
+                                    // print(state.orderProductList.length);
                                     return OrderProductCard(
                                         productId:
                                             state.orderList[index].productId,
                                         userId: state.orderList[index].userId!,
-                                        price: state.orderProductList[0].price
+                                        price: state
+                                            .orderProductList[index].price
                                             .toString(),
                                         orderStatus:
                                             state.orderList[index].orderStatus!,
@@ -65,15 +68,16 @@ class ScreenOrder extends StatelessWidget {
                                             state.orderList[index].orderDate!,
                                         orderId:
                                             state.orderList[index].orderId!,
-                                        color: state.orderProductList[0].color!,
+                                        color: state
+                                            .orderProductList[index].color!,
                                         productName:
-                                            state.orderProductList[0].name,
+                                            state.orderProductList[index].name,
                                         count: state.orderList[index].count
                                             .toString(),
                                         productSize:
-                                            state.orderProductList[0].size!,
+                                            state.orderProductList[index].size!,
                                         imageUrl: state
-                                            .orderProductList[0].imageurl!);
+                                            .orderProductList[index].imageurl!);
                                   },
                                   separatorBuilder: (context, index) =>
                                       kHeight10,

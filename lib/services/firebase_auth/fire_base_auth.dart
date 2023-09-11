@@ -116,9 +116,10 @@ class FirebaseAuthentication {
           PageTransition(
               child: ScreenNavigationbar(), type: PageTransitionType.fade),
           (Route<dynamic> route) => false);
+      // ignore: unused_catch_clause
     } on FirebaseAuthException catch (e) {
       navigatorKey.currentState!.pop();
-      Fluttertoast.showToast(msg: e.message.toString());
+      Fluttertoast.showToast(msg: "Email or Password incorrect");
     }
 
     return;
@@ -179,8 +180,9 @@ class FirebaseAuthentication {
       // ignore: use_build_context_synchronously
       Fluttertoast.showToast(msg: 'Logged out');
       // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(context,
-          PageTransition(child: ScreenLogin(), type: PageTransitionType.fade));
+      Navigator.of(context).pushAndRemoveUntil(
+          PageTransition(child: ScreenLogin(), type: PageTransitionType.fade),
+          (Route<dynamic> route) => false);
     } on FirebaseAuthException catch (e) {
       navigatorKey.currentState!.pop();
       Fluttertoast.showToast(msg: e.message.toString());

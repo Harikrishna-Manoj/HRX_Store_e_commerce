@@ -25,7 +25,7 @@ class AddressService {
     // print('adress added${address.id.toString()}');
     await addressRef.doc(address.id).set(address.toJson());
     // print(address.id);
-    addressRef.doc(address.id).update({'isDefault': false});
+    addressRef.doc(address.id).update({'isDefault': true});
     navigatorKey.currentState!.pop();
     // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
